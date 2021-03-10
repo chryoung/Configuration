@@ -5,4 +5,5 @@ convenience.
 
 ## Usage
 
-- **tmux.conf**: For tmux, copy to `~/.tmux.conf`
+- **tmux.conf**: For tmux. Copy to `~/.tmux.conf`
+- **vimrc**: For vim. Copy to `~/.vimrc`
