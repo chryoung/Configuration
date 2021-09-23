@@ -6,7 +6,7 @@
 
 ### Configuration
 
-#### Menu
+#### Auto-generated application menu
 
 ```sh
 sudo pacman -S archlinux-xdg-menu obconf
