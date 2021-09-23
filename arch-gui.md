@@ -4,7 +4,7 @@
 
 `sudo pacman -S openbox`
 
-### Launch openbox using xinit
+#### Launch openbox using xinit
 
 ```sh
 sudo pacman -S xorg-xinit
@@ -52,6 +52,18 @@ exec openbox-session
 ```
 
 Then `startx`.
+
+#### Auto start X
+
+Edit `~/.bash_profile` or `~/.zprofile` if zsh is in use.
+
+Add
+
+```sh
+if [[ -z $DISPLAY ]] && [[ $(tty) = /dev/tty1 ]]; then
+    startx
+fi
+```
 
 ### Configuration
 
@@ -158,7 +170,7 @@ gtk-theme-name = Adwaita
 gtk-font-name = DejaVu Sans 11
 ```
 
-## Numix theme (For Arch disto)
+## Numix theme
 
 Install the artifacts/numix* by the following order:
 
