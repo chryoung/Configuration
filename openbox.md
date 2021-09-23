@@ -37,6 +37,17 @@ And the whole `root-menu` may look like this:
 
 ## Dock
 
+### tint2
+
+#### Install
+
+`sudo pacman -S tint2`
+
+#### Autostart
+
+- Using Xorg: Add `tint2 &` to the ~/.xinitrc before the exec of the window manager.
+- Using Openbox: Edit `~/.config/openbox/autostart`, add `tint2 &` at the end of the file.
+
 ### Cairo-dock
 
 #### Install
@@ -74,7 +85,6 @@ Put the theme folder into `/usr/share/themes/`.
 - GTK+ 2:
 
 ```
-
 ~/.gtkrc-2.0
 gtk-icon-theme-name = "Adwaita"
 gtk-theme-name = "Adwaita"
