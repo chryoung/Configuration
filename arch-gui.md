@@ -96,7 +96,7 @@ And the whole `root-menu` may look like this:
 </menu>
 ```
 
-## Theme
+### Theme
 
 ```sh
 sudo pacman -S obconf
@@ -104,7 +104,7 @@ sudo pacman -S obconf
 
 Launch obconf to select theme.
 
-## Dock
+## Dock (Taskbar)
 
 ### tint2
 
