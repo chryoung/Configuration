@@ -1,0 +1,9 @@
+[alias]
+        pp = pull --prune
+        co = checkout
+        cm = commit
+        last = log -1 HEAD
+        uno = status -uno
+        fa = fetch --all --prune
+        st = status
+        rc = checkout --
