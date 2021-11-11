@@ -7,3 +7,4 @@
         fa = fetch --all --prune
         st = status
         rc = checkout --
+        br = branch
