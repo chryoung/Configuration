@@ -75,5 +75,5 @@ return require('packer').startup(function()
   
     use 'simnalamburt/vim-mundo'
   
-  end)
+end)
   
