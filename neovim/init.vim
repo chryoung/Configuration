@@ -22,3 +22,8 @@ nnoremap <silent> <F2> :NvimTreeToggle<CR>
 
 " Use pop-up window for LeaderF
 let g:Lf_WindowPosition='popup'
+
+" hop key bindings
+nnoremap <silent> <Leader>w :HopWord<CR>
+nnoremap <silent> <Leader>c :HopChar1<CR>
+nnoremap <silent> <Leader>l :HopLine<CR>
