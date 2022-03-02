@@ -9,7 +9,7 @@ git clone --depth 1 https://github.com/wbthomason/packer.nvim\
 
 ## Install Python 3 and neovim package
 
-pip3 install neovim
+Install Python 3 via the package manager then run `pip3 install neovim`.
 
 ## Setup
 
