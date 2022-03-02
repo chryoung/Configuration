@@ -18,7 +18,7 @@ set undofile
 set undodir=~/.vim/undo
 
 " Neo tree shortcut
-nnoremap <silent> <F2> :NeoTreeShowToggle<CR>
+nnoremap <silent> <F2> :NvimTreeToggle<CR>
 
 " Use pop-up window for LeaderF
 let g:Lf_WindowPosition='popup'

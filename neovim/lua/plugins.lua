@@ -25,13 +25,13 @@ return require('packer').startup(function()
   
     -- File management
     use {
-      'nvim-neo-tree/neo-tree.nvim',
+      'kyazdani42/nvim-tree.lua',
       requires = {
-        'MunifTanjim/nui.nvim',
-        'nvim-lua/plenary.nvim',
-      }
+        'kyazdani42/nvim-web-devicons', -- optional, for file icon
+      },
+      config = function() require'nvim-tree'.setup {} end
     }
-  
+
     -- Git support
     use 'tpope/vim-fugitive'
   
