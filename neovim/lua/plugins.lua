@@ -80,4 +80,8 @@ return require('packer').startup(function()
       config = function() require("which-key").setup() end
     }
 
+    use 'jlanzarotta/bufexplorer'
+
+    use 'alvan/vim-closetag'
+
 end)

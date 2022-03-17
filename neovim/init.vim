@@ -1,8 +1,8 @@
 " Enable Packer for plugin management
 lua require('plugins')
 
-" Show line number
-set number
+" Show relative line number
+set rnu
 
 " Use 2 spaces to replace tab
 set tabstop=2
@@ -27,3 +27,6 @@ let g:Lf_WindowPosition='popup'
 nnoremap <silent> <Leader>w :HopWord<CR>
 nnoremap <silent> <Leader>c :HopChar1<CR>
 nnoremap <silent> <Leader>l :HopLine<CR>
+
+" Auto close Ruby on Rails, React template tags
+let g:closetag_filenames = '*.html,*.xhtml,*.phtml,*.html.erb,*.jsx,*.tsx'
