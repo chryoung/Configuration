@@ -64,7 +64,7 @@ return require('packer').startup(function()
   use {
     'Yggdroot/LeaderF',
     run = ':LeaderfInstallCExtension',
-    cmd = 'Leaderf'
+    cmd = { 'Leaderf' }
   }
 
   -- Commenet code. Type gcc to comment a line
@@ -124,4 +124,12 @@ return require('packer').startup(function()
 
   use { 'machakann/vim-sandwich', event = 'VimEnter' }
 
+  use {
+    'goolord/alpha-nvim',
+    requires = { 'kyazdani42/nvim-web-devicons' },
+    event = 'VimEnter',
+    config = function ()
+        require'alpha'.setup(require'alpha.themes.startify'.config)
+    end
+  }
 end)
