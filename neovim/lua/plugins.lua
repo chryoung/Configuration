@@ -54,7 +54,11 @@ return require('packer').startup(function()
   }
 
   -- Git support
-  use { 'tpope/vim-fugitive', event = 'User InGitRepo' }
+  use {
+    'tpope/vim-fugitive',
+    event = 'User InGitRepo',
+    cmd = { 'G', 'Git' }
+  }
 
   -- File search
   use {
