@@ -1,14 +1,17 @@
 " Enable Packer for plugin management
 lua require('plugins')
 
-" Show line number
-set number
+" Show relativbe line number
+set rnu
 
 " Use 2 spaces to replace tab
 set tabstop=2
 set softtabstop=2
 set shiftwidth=2
 set expandtab
+
+" Case-insensitive search
+set ignorecase
 
 " Set theme
 colorscheme dracula
