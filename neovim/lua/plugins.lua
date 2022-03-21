@@ -4,84 +4,120 @@
 -- vim.cmd [[packadd packer.nvim]]
 
 return require('packer').startup(function()
-    -- Packer can manage itself
-    use 'wbthomason/packer.nvim'
+  -- Speed up NeoVim startup
+  use {
+    'lewis6991/impatient.nvim',
+    config = [[require('impatient')]]
+  }
 
-    -- Close the parenthesis
-    use '9mm/vim-closer'
+  -- Packer can manage itself
+  use 'wbthomason/packer.nvim'
 
-    -- Dispatch job asynchronously
-    use { 'tpope/vim-dispatch', opt = true, cmd = { 'Dispatch', 'Make', 'Focus', 'Start' } }
+  -- Close the parenthesis
+  use { '9mm/vim-closer', event = 'VimEnter' }
 
-    -- Matches the parenthesis and more
-    use { 'andymass/vim-matchup', event = 'VimEnter' }
+  -- Dispatch job asynchronously
+  use {
+    'tpope/vim-dispatch',
+    opt = true,
+    cmd = { 'Dispatch', 'Make', 'Focus', 'Start' }
+  }
 
-    -- Markdown support
-    use { 'iamcco/markdown-preview.nvim', run = 'cd app && yarn install', cmd = 'MarkdownPreview' }
-    use { 'preservim/vim-markdown', requires = { 'godlygeek/tabular' } }
+  -- Matches the parenthesis and more
+  use { 'andymass/vim-matchup', event = 'VimEnter' }
 
-    -- Themes
-    use { 'dracula/vim', as = 'dracula' }
+  -- Markdown support
+  use {
+    'iamcco/markdown-preview.nvim',
+    run = 'cd app && yarn install',
+    cmd = 'MarkdownPreview',
+    ft = { "markdown" }
+  }
 
-    -- File management
-    use {
-      'kyazdani42/nvim-tree.lua',
-      requires = {
-        'kyazdani42/nvim-web-devicons', -- optional, for file icon
-      },
-      config = function() require'nvim-tree'.setup {} end
-    }
+  use {
+    'preservim/vim-markdown',
+    requires = { 'godlygeek/tabular' },
+    ft = { "markdown" }
+  }
 
-    -- Git support
-    use 'tpope/vim-fugitive'
+  -- Themes
+  use { 'dracula/vim', as = 'dracula' }
 
-    -- File search
-    use { 'Yggdroot/LeaderF', run = ':LeaderfInstallCExtension' }
+  -- File management
+  use {
+    'kyazdani42/nvim-tree.lua',
+    requires = {
+      'kyazdani42/nvim-web-devicons', -- optional, for file icon
+    },
+    cmd = { 'NvimTreeToggle', 'NvimTreeOpen' },
+    config = function() require'nvim-tree'.setup {} end
+  }
 
-    -- Commenet code. Type gcc to comment a line
-    use { 'tpope/vim-commentary' }
+  -- Git support
+  use { 'tpope/vim-fugitive', event = 'User InGitRepo' }
 
-    -- Fast move
-    use {
-      'phaazon/hop.nvim',
-      branch = 'v1', -- optional but strongly recommended
-      config = function()
-        -- you can configure Hop the way you like here; see :h hop-config
-        require'hop'.setup { keys = 'etovxqpdygfblzhckisuran' }
-      end
-    }
+  -- File search
+  use {
+    'Yggdroot/LeaderF',
+    run = ':LeaderfInstallCExtension',
+    cmd = 'Leaderf'
+  }
 
-    -- Snippet
-    use 'SirVer/ultisnips'
+  -- Commenet code. Type gcc to comment a line
+  use { 'tpope/vim-commentary', event = 'VimEnter' }
 
-    -- Status line
-    use {
-      'nvim-lualine/lualine.nvim',
-      requires = { 'kyazdani42/nvim-web-devicons', opt = true },
-      config = function() require('lualine').setup() end
-    }
+  -- Fast move
+  use {
+    'phaazon/hop.nvim',
+    branch = 'v1', -- optional but strongly recommended
+    event = 'VimEnter',
+    config = function()
+      -- you can configure Hop the way you like here; see :h hop-config
+      require'hop'.setup { keys = 'etovxqpdygfblzhckisuran' }
+    end
+  }
 
-    -- Command completion
-    use { 'gelguy/wilder.nvim', run = ':UpdateRemotePlugins' }
+  -- Snippet
+  use { 'SirVer/ultisnips', event = 'VimEnter' }
 
-    -- Type :AsyncRun to run a command aschronously
-    use { 'skywind3000/asyncrun.vim', cmd = {'AsyncRun'} }
+  -- Status line
+  use {
+    'nvim-lualine/lualine.nvim',
+    requires = { 'kyazdani42/nvim-web-devicons', opt = true },
+    event = 'VimEnter',
+    config = function() require('lualine').setup() end
+  }
 
-    -- Better highlighting
-    use { 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate' }
+  -- Command completion
+  use {
+    'gelguy/wilder.nvim',
+    run = ':UpdateRemotePlugins',
+    event = 'VimEnter'
+  }
 
-    -- Smooth scroll
-    use { 'karb94/neoscroll.nvim', config = function() require('neoscroll').setup() end }
+  -- Type :AsyncRun to run a command aschronously
+  use { 'skywind3000/asyncrun.vim', cmd = { 'AsyncRun' } }
 
-    use 'simnalamburt/vim-mundo'
+  -- Better highlighting
+  use {
+    'nvim-treesitter/nvim-treesitter',
+    run = ':TSUpdate',
+    event = 'VimEnter'
+  }
 
-    use {
-      "folke/which-key.nvim",
-      config = function() require("which-key").setup() end
-    }
+  -- Smooth scroll
+  use { 'karb94/neoscroll.nvim', config = function() require('neoscroll').setup() end }
 
-    use 'jlanzarotta/bufexplorer'
+  use { 'simnalamburt/vim-mundo', cmd = { 'MundoToggle', 'MundoShow' }}
 
-    use 'alvan/vim-closetag'
+  use {
+    "folke/which-key.nvim",
+    event = 'VimEnter',
+    config = function() require("which-key").setup() end
+  }
+
+  use { 'alvan/vim-closetag', event = 'VimEnter' }
+
+  use { 'machakann/vim-sandwich', event = 'VimEnter' }
 
 end)

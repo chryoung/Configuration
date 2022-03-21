@@ -1,8 +1,8 @@
 " Enable Packer for plugin management
 lua require('plugins')
 
-" Show relative line number
-set rnu
+" Show line number
+set number
 
 " Use 2 spaces to replace tab
 set tabstop=2
@@ -13,9 +13,16 @@ set expandtab
 " Set theme
 colorscheme dracula
 
+" Set space as leader
+nnoremap <Space> <Nop>
+let mapleader=" "
+
 " Save undo history for mundo
 set undofile
 set undodir=~/.vim/undo
+
+" Mundo shortcut
+nnoremap <silent> <F3> :MundoToggle<CR>
 
 " Neo tree shortcut
 nnoremap <silent> <F2> :NvimTreeToggle<CR>
@@ -24,9 +31,9 @@ nnoremap <silent> <F2> :NvimTreeToggle<CR>
 let g:Lf_WindowPosition='popup'
 
 " hop key bindings
-nnoremap <silent> <Leader>w :HopWord<CR>
-nnoremap <silent> <Leader>c :HopChar1<CR>
-nnoremap <silent> <Leader>l :HopLine<CR>
+nnoremap <silent> <Leader>jw :HopWord<CR>
+nnoremap <silent> <Leader>jc :HopChar1<CR>
+nnoremap <silent> <Leader>jl :HopLine<CR>
 
-" Auto close Ruby on Rails, React template tags
-let g:closetag_filenames = '*.html,*.xhtml,*.phtml,*.html.erb,*.jsx,*.tsx'
+" auto-close tag for ruby on rails, react and react with typescript
+let g:closetag_filenames = "*.html.erb,*.html,*.xhtml,*.phtml,*.tsx,*.jsx"
