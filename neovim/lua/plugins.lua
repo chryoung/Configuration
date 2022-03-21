@@ -31,13 +31,13 @@ return require('packer').startup(function()
     'iamcco/markdown-preview.nvim',
     run = 'cd app && yarn install',
     cmd = 'MarkdownPreview',
-    ft = { "markdown" }
+    ft = { 'markdown' }
   }
 
   use {
     'preservim/vim-markdown',
     requires = { 'godlygeek/tabular' },
-    ft = { "markdown" }
+    ft = { 'markdown' }
   }
 
   -- Themes
@@ -56,7 +56,6 @@ return require('packer').startup(function()
   -- Git support
   use {
     'tpope/vim-fugitive',
-    event = 'User InGitRepo',
     cmd = { 'G', 'Git' }
   }
 
@@ -115,9 +114,9 @@ return require('packer').startup(function()
   use { 'simnalamburt/vim-mundo', cmd = { 'MundoToggle', 'MundoShow' }}
 
   use {
-    "folke/which-key.nvim",
+    'folke/which-key.nvim',
     event = 'VimEnter',
-    config = function() require("which-key").setup() end
+    config = function() require('which-key').setup() end
   }
 
   use { 'alvan/vim-closetag', event = 'VimEnter' }
@@ -126,10 +125,15 @@ return require('packer').startup(function()
 
   use {
     'goolord/alpha-nvim',
-    requires = { 'kyazdani42/nvim-web-devicons' },
     event = 'VimEnter',
     config = function ()
         require'alpha'.setup(require'alpha.themes.startify'.config)
     end
   }
+
+  use {
+    'tpope/vim-rails',
+    event = 'VimEnter'
+  }
+
 end)

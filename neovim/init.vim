@@ -1,7 +1,7 @@
 " Enable Packer for plugin management
 lua require('plugins')
 
-" Show relativbe line number
+" Show line number
 set rnu
 
 " Use 2 spaces to replace tab
@@ -23,7 +23,7 @@ let mapleader=" "
 " Save undo history for mundo
 set undofile
 set undodir=~/.vim/undo
-
+"
 " Mundo shortcut
 nnoremap <silent> <F3> :MundoToggle<CR>
 
@@ -40,3 +40,61 @@ nnoremap <silent> <Leader>jl :HopLine<CR>
 
 " auto-close tag for ruby on rails, react and react with typescript
 let g:closetag_filenames = "*.html.erb,*.html,*.xhtml,*.phtml,*.tsx,*.jsx"
+
+" Shortcuts
+nnoremap <silent> <C-x> :wq<CR>
+
+" Configuration commands
+command Econf edit $MYVIMRC
+command ReloadConf source $MYVIMRC
+command Eplugin edit $HOME/.config/nvim/lua/plugins.lua
+
+" Let Y do things like C and D
+nnoremap Y y$
+
+" Centre the search jump and J
+nnoremap n nzzzv
+nnoremap N Nzzzv
+nnoremap J mzJ`z
+
+" Undo break points
+inoremap , ,<C-g>u
+inoremap . .<C-g>u
+inoremap ! !<C-g>u
+inoremap ? ?<C-g>u
+inoremap _ _<C-g>u
+inoremap - -<C-g>u
+inoremap ( (<C-g>u
+inoremap ) )<C-g>u
+inoremap [ [<C-g>u
+inoremap ] ]<C-g>u
+
+" Register j, k move into C-i and C-o
+nnoremap <expr> k (v:count > 5 ? "m'" . v:count : "") . 'k'
+nnoremap <expr> j (v:count > 5 ? "m'" . v:count : "") . 'j'
+
+" Move lines around
+vnoremap J :m '>+1<CR>gv=gv
+vnoremap K :m '<-2<CR>gv=gv
+inoremap <C-j> <ESC>:m .+1<CR>==
+inoremap <C-k> <ESC>:m .-2<CR>==
+nnoremap <Leader>mj :m .+1<CR>==
+nnoremap <Leader>mk :m .-2<CR>==
+
+" Toggle quickfix window
+function! ToggleQuickFix()
+  if empty(filter(getwininfo(), 'v:val.quickfix'))
+    copen
+  else
+    cclose
+  endif
+endfunction
+
+nnoremap <silent> <C-q> :call ToggleQuickFix()<CR>
+
+" Jump between quickfix items
+nnoremap <C-j> :cnext
+nnoremap <C-k> :cprev
+
+" Redraw screen and turn off the current highlight search
+nnoremap <C-L> :nohl<CR><C-L>
