@@ -94,11 +94,11 @@ endfunction
 nnoremap <silent> <C-q> :call ToggleQuickFix()<CR>
 
 " Jump between quickfix items
-nnoremap <C-j> :cnext
-nnoremap <C-k> :cprev
+nnoremap <silent> <C-j> :cnext<CR>
+nnoremap <silent> <C-k> :cprev<CR>
 
 " Redraw screen and turn off the current highlight search
-nnoremap <C-L> :nohl<CR><C-L>
+nnoremap <silent> <C-L> :nohl<CR><C-L>
 
 " Exit
 nnoremap <silent> <Leader>x :wqa<CR>
