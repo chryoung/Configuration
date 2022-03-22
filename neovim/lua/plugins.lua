@@ -133,7 +133,7 @@ return require('packer').startup(function()
 
   use {
     'tpope/vim-rails',
-    event = 'VimEnter'
+    ft = { 'ruby', 'eruby' }
   }
 
 end)
