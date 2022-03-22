@@ -102,6 +102,7 @@ nnoremap <C-L> :nohl<CR><C-L>
 
 " Exit
 nnoremap <silent> <Leader>x :wqa<CR>
+nnoremap <silent> <Leader>q :qa!<CR>
 
 " Colon map
 nnoremap <Leader><Space> :
