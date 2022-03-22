@@ -63,7 +63,7 @@ return require('packer').startup(function()
   use {
     'Yggdroot/LeaderF',
     run = ':LeaderfInstallCExtension',
-    cmd = { 'Leaderf' }
+    cmd = { 'Leaderf', 'LeaderfFile', 'LeaderfBuffer' }
   }
 
   -- Commenet code. Type gcc to comment a line

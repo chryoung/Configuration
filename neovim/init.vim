@@ -23,7 +23,7 @@ let mapleader=" "
 " Save undo history for mundo
 set undofile
 set undodir=~/.vim/undo
-"
+
 " Mundo shortcut
 nnoremap <silent> <F3> :MundoToggle<CR>
 
@@ -33,6 +33,10 @@ nnoremap <silent> <F2> :NvimTreeToggle<CR>
 " Use pop-up window for LeaderF
 let g:Lf_WindowPosition='popup'
 
+" Map LeaderF for lazy load
+nnoremap <silent> <Leader>f :LeaderfFile<CR>
+nnoremap <silent> <Leader>b :LeaderfBuffer<CR>
+
 " hop key bindings
 nnoremap <silent> <Leader>jw :HopWord<CR>
 nnoremap <silent> <Leader>jc :HopChar1<CR>
@@ -40,9 +44,6 @@ nnoremap <silent> <Leader>jl :HopLine<CR>
 
 " auto-close tag for ruby on rails, react and react with typescript
 let g:closetag_filenames = "*.html.erb,*.html,*.xhtml,*.phtml,*.tsx,*.jsx"
-
-" Shortcuts
-nnoremap <silent> <C-x> :wq<CR>
 
 " Configuration commands
 command Econf edit $MYVIMRC
@@ -98,3 +99,9 @@ nnoremap <C-k> :cprev
 
 " Redraw screen and turn off the current highlight search
 nnoremap <C-L> :nohl<CR><C-L>
+
+" Exit
+nnoremap <silent> <Leader>x :wqa<CR>
+
+" Colon map
+nnoremap <Leader><Space> :
