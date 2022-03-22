@@ -46,11 +46,11 @@ nnoremap <silent> <Leader>jl :HopLine<CR>
 let g:closetag_filenames = "*.html.erb,*.html,*.xhtml,*.phtml,*.tsx,*.jsx"
 
 " Configuration commands
-command Econf edit $MYVIMRC
-command ReloadConf source $MYVIMRC
+command Econfig edit $MYVIMRC
+command ReloadConfig source $MYVIMRC
 command Eplugin edit $HOME/.config/nvim/lua/plugins.lua
 
-" Let Y behave like C and D
+" Let Y do things like C and D
 nnoremap Y y$
 
 " Centre the search jump and J
@@ -100,9 +100,22 @@ nnoremap <silent> <C-k> :cprev<CR>
 " Redraw screen and turn off the current highlight search
 nnoremap <silent> <C-L> :nohl<CR><C-L>
 
-" Exit shortcuts
+" Exit
 nnoremap <silent> <Leader>x :wqa<CR>
 nnoremap <silent> <Leader>q :qa!<CR>
 
+
 " Colon map
 nnoremap <Leader><Space> :
+
+" Toggle Tarbar
+nnoremap <silent> <F4> :TagbarToggle<CR>
+
+" UltiSnip settings
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger="<c-b>"
+let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+
+let g:UltiSnipsEditSplit="vertical"
+
+autocmd FileType eruby EmmetInstall

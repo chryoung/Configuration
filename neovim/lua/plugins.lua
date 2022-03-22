@@ -82,6 +82,11 @@ return require('packer').startup(function()
 
   -- Snippet
   use { 'SirVer/ultisnips', event = 'VimEnter' }
+  use {
+    'honza/vim-snippets',
+    requires = { 'SirVer/ultisnips' },
+    event = 'VimEnter'
+  }
 
   -- Status line
   use {
@@ -134,6 +139,21 @@ return require('packer').startup(function()
   use {
     'tpope/vim-rails',
     ft = { 'ruby', 'eruby' }
+  }
+
+  use {
+    'rust-lang/rust.vim',
+    ft = { 'rust' }
+  }
+
+  use {
+    'preservim/tagbar',
+    ft = { 'c', 'cpp', 'rust' }
+  }
+
+  use {
+    'mattn/emmet-vim',
+    event = 'VimEnter'
   }
 
 end)
