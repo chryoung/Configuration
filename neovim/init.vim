@@ -118,4 +118,5 @@ let g:UltiSnipsJumpBackwardTrigger="<c-z>"
 
 let g:UltiSnipsEditSplit="vertical"
 
+" Enable Emmet for eruby
 autocmd FileType eruby EmmetInstall
