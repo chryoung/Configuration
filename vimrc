@@ -58,7 +58,7 @@ nmap <Space> <Leader>
 " Let Y behave like C and D
 nnoremap Y y$
 
-" Centre the J
+" Centre the n, N and J
 nnoremap n nzzzv
 nnoremap N Nzzzv
 nnoremap J mzJ`z
