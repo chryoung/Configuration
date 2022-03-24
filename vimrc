@@ -118,6 +118,6 @@ nnoremap <Leader><Space> :
 " Redraw screen and turn off the current highlight search
 nnoremap <silent> <C-L> :nohl<CR><C-L>
 
-map <Leader>c <Plug>(easymotion-bd-f)
-map <Leader>l <Plug>(easymotion-bd-jk)
-map <Leader>w <Plug>(easymotion-bd-w)
+map <Leader>jc <Plug>(easymotion-bd-f)
+map <Leader>jl <Plug>(easymotion-bd-jk)
+map <Leader>jw <Plug>(easymotion-bd-w)
