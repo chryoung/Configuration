@@ -100,9 +100,10 @@ nnoremap <silent> <C-k> :cprev<CR>
 " Redraw screen and turn off the current highlight search
 nnoremap <silent> <C-L> :nohl<CR><C-L>
 
-" Exit
-nnoremap <silent> <Leader>x :wqa<CR>
-nnoremap <silent> <Leader>q :qa!<CR>
+" wq Map
+nnoremap <silent> <Leader>z :wq<CR>
+nnoremap <silent> <Leader>q :q<CR>
+nnoremap <silent> <Leader>w :w<CR>
 
 
 " Colon map
