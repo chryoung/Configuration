@@ -105,7 +105,6 @@ nnoremap <silent> <Leader>z :wq<CR>
 nnoremap <silent> <Leader>q :q<CR>
 nnoremap <silent> <Leader>w :w<CR>
 
-
 " Colon map
 nnoremap <Leader><Space> :
 
