@@ -24,6 +24,8 @@ Plugin 'bufexplorer.zip'
 " Easy motion
 Plugin 'easymotion/vim-easymotion'
 
+Plugin 'lukas-reineke/indent-blankline.nvim'
+
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 filetype plugin indent on    " required

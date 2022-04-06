@@ -156,4 +156,9 @@ return require('packer').startup(function()
     event = 'VimEnter'
   }
 
+  use {
+    'lukas-reineke/indent-blankline.nvim',
+    event = 'VimEnter'
+  }
+
 end)
