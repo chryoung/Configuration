@@ -32,6 +32,8 @@ filetype plugin indent on    " required
 
 " End of Vundle
 
+syntax on
+
 if &t_Co > 2 || has("gui_running")
   " Switch on highlighting the last used search pattern.
   set hlsearch
