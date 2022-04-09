@@ -169,4 +169,9 @@ return require('packer').startup(function()
     event = 'VimEnter'
   }
 
+  use {
+    'christoomey/vim-tmux-navigator',
+    event = 'VimEnter'
+  }
+
 end)

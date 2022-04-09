@@ -26,6 +26,8 @@ Plugin 'easymotion/vim-easymotion'
 
 Plugin 'lukas-reineke/indent-blankline.nvim'
 
+Plugin 'christoomey/vim-tmux-navigator'
+
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 filetype plugin indent on    " required
@@ -103,8 +105,8 @@ endfunction
 nnoremap <silent> <C-q> :call ToggleQuickFix()<CR>
 
 " Jump between quickfix items
-nnoremap <silent> <C-j> :cnext<CR>
-nnoremap <silent> <C-k> :cprev<CR>
+nnoremap <silent> <Leader>fj :cnext<CR>
+nnoremap <silent> <Leader>fk :cprev<CR>
 
 " NerdTree shortcuts
 nnoremap <silent> <F2> :NERDTreeToggle<CR>
