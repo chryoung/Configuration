@@ -128,3 +128,11 @@ nnoremap <silent> <C-L> :nohl<CR><C-L>
 map <Leader>jc <Plug>(easymotion-bd-f)
 map <Leader>jl <Plug>(easymotion-bd-jk)
 map <Leader>jw <Plug>(easymotion-bd-w)
+
+let g:tmux_navigator_no_mappings = 1
+
+nnoremap <silent> {Left-Mapping} :TmuxNavigateLeft<cr>
+nnoremap <silent> {Down-Mapping} :TmuxNavigateDown<cr>
+nnoremap <silent> {Up-Mapping} :TmuxNavigateUp<cr>
+nnoremap <silent> {Right-Mapping} :TmuxNavigateRight<cr>
+nnoremap <silent> {Previous-Mapping} :TmuxNavigatePrevious<cr>
