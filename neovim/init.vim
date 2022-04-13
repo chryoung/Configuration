@@ -98,7 +98,7 @@ nnoremap <silent> <Leader>fj :cnext<CR>
 nnoremap <silent> <Leader>fk :cprev<CR>
 
 " Redraw screen and turn off the current highlight search
-nnoremap <silent> <C-L> :nohl<CR><C-L>
+nnoremap <silent> <Leader>l :nohl<CR><C-L>
 
 " wq Map
 nnoremap <silent> <Leader>z :wq<CR>
