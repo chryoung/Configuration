@@ -17,3 +17,7 @@ tmux: tmux.conf
 	if [ ! -e /usr/share/powerline/bindings/tmux/powerline.conf ]; then sudo apt install powerline; fi
 	install tmux.conf ${HOME}/.tmux.conf
 
+simple_tmux: tmux.conf simple_tmux_theme.conf
+	install tmux.conf ${HOME}/.tmux.conf
+	sed -i -e '1,10d' ${HOME}/.tmux.conf
+	cat simple_tmux_theme.conf >> ${HOME}/.tmux.conf
