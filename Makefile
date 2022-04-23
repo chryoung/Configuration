@@ -6,6 +6,7 @@ neovim:
 	if [ ! -e ${HOME}/.local/share/nvim/site/pack/packer/start/packer.nvim ]; then git clone --depth=1 https://github.com/wbthomason/packer.nvim ${HOME}/.local/share/nvim/site/pack/packer/start/packer.nvim; fi
 	install neovim/init.vim ${HOME}/.config/nvim/
 	install neovim/lua/plugins.lua ${HOME}/.config/nvim/lua/
+	install neovim/lua/config.lua ${HOME}/.config/nvim/lua/
 	@echo Start nvim and run :PackerSync manually
 
 vim: vimrc

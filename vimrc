@@ -1,3 +1,7 @@
+" Space as leader
+nnoremap <Space> <Nop>
+nmap <Space> <Leader>
+
 " Vundle
 set nocompatible              " be iMproved, required
 filetype off                  " required
@@ -18,15 +22,19 @@ Plugin 'chriskempson/base16-vim'
 " File explorer
 Plugin 'scrooloose/nerdtree'
 
-" Buffer management
-Plugin 'bufexplorer.zip'
-
 " Easy motion
 Plugin 'easymotion/vim-easymotion'
 
 Plugin 'lukas-reineke/indent-blankline.nvim'
 
 Plugin 'christoomey/vim-tmux-navigator'
+
+Plugin 'rizzatti/dash.vim'
+
+" fzz
+Plugin 'junegunn/fzf'
+
+Plugin 'junegunn/fzf.vim'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -56,10 +64,6 @@ set rnu
 
 " Case-insensitive search
 set ignorecase
-
-" Map space as leader
-nnoremap <Space> <Nop>
-nmap <Space> <Leader>
 
 " Let Y behave like C and D
 nnoremap Y y$
@@ -135,3 +139,14 @@ nnoremap <silent> <C-k> :TmuxNavigateUp<cr>
 nnoremap <silent> <C-j> :TmuxNavigateDown<cr>
 nnoremap <silent> <C-h> :TmuxNavigateLeft<cr>
 nnoremap <silent> <C-l> :TmuxNavigateRight<cr>
+
+" Configuration commands
+command Econfig edit $MYVIMRC
+command ReloadConfig source $MYVIMRC
+
+" fzf.vim
+nnoremap <silent> <Leader>f :Files<CR>
+nnoremap <silent> <Leader>b :Buffers<CR>
+
+" Dash
+nnoremap <silent> <Leader>dw :Dash<CR>

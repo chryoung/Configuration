@@ -171,4 +171,21 @@ return require('packer').startup(function()
 
   use { 'christoomey/vim-tmux-navigator' }
 
+  use {
+    'nvim-telescope/telescope-fzf-native.nvim',
+    run = 'make'
+  }
+
+  use {
+    'nvim-telescope/telescope.nvim',
+    requires = { { 'nvim-lua/plenary.nvim' } },
+    Event = 'VimEnter'
+  }
+
+  use {
+    'mrjones2014/dash.nvim',
+    run = 'make install',
+    Event = 'VimEnter'
+  }
+
 end)

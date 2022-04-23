@@ -1,5 +1,6 @@
 " Enable Packer for plugin management
 lua require('plugins')
+lua require('config')
 
 " Show line number
 set rnu
@@ -32,10 +33,6 @@ nnoremap <silent> <F2> :NvimTreeToggle<CR>
 
 " Use pop-up window for LeaderF
 let g:Lf_WindowPosition='popup'
-
-" Map LeaderF for lazy load
-nnoremap <silent> <Leader>f :LeaderfFile<CR>
-nnoremap <silent> <Leader>b :LeaderfBuffer<CR>
 
 " hop key bindings
 nnoremap <silent> <Leader>jw :HopWord<CR>
@@ -127,3 +124,13 @@ nnoremap <silent> <C-k> :TmuxNavigateUp<cr>
 nnoremap <silent> <C-j> :TmuxNavigateDown<cr>
 nnoremap <silent> <C-h> :TmuxNavigateLeft<cr>
 nnoremap <silent> <C-l> :TmuxNavigateRight<cr>
+
+" telescope
+nnoremap <leader>ff <cmd>lua require('telescope.builtin').find_files()<cr>
+nnoremap <leader>fg <cmd>lua require('telescope.builtin').live_grep()<cr>
+nnoremap <leader>fb <cmd>lua require('telescope.builtin').buffers()<cr>
+nnoremap <leader>fh <cmd>lua require('telescope.builtin').help_tags()<cr>
+
+" Dash
+nnoremap <Leader>dq :Dash<CR>
+nnoremap <Leader>dw :DashWord<CR>
