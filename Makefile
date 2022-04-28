@@ -2,7 +2,7 @@
 all: neovim tmux vim
 
 neovim:
-	if [ ! -d ${HOME}/.config/nvim/lua ]; then mkdir ${HOME}/.config/nvim/lua; fi
+	if [ ! -d ${HOME}/.config/nvim/lua ]; then mkdir -p ${HOME}/.config/nvim/lua; fi
 	if [ ! -e ${HOME}/.local/share/nvim/site/pack/packer/start/packer.nvim ]; then git clone --depth=1 https://github.com/wbthomason/packer.nvim ${HOME}/.local/share/nvim/site/pack/packer/start/packer.nvim; fi
 	install neovim/init.vim ${HOME}/.config/nvim/
 	install neovim/lua/plugins.lua ${HOME}/.config/nvim/lua/
