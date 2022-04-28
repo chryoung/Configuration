@@ -14,7 +14,7 @@ return require('packer').startup(function()
   use 'wbthomason/packer.nvim'
 
   -- Close the parenthesis
-  use { '9mm/vim-closer', event = 'VimEnter' }
+  use { 'rstacruz/vim-closer', event = 'VimEnter' }
 
   -- Dispatch job asynchronously
   use {
