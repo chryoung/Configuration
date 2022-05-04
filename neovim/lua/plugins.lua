@@ -3,7 +3,15 @@
 -- Only required if you have packer configured as `opt`
 -- vim.cmd [[packadd packer.nvim]]
 
-return require('packer').startup(function()
+local packer = require('packer')
+
+packer.init({
+  git = {
+    clone_timeout = 300 -- Timeout, in seconds, for git clones
+  }
+})
+
+return packer.startup(function()
   -- Speed up NeoVim startup
   use {
     'lewis6991/impatient.nvim',
