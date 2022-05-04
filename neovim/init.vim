@@ -134,3 +134,6 @@ nnoremap <leader>h <cmd>lua require('telescope.builtin').help_tags()<cr>
 " Dash
 nnoremap <Leader>dq :Dash<CR>
 nnoremap <Leader>dw :DashWord<CR>
+
+" Disable Markdown fold
+let g:vim_markdown_folding_disabled = 1
