@@ -6,6 +6,7 @@ telescope.setup({
       search_engine = 'google',
       file_type_keywords = {
         ruby = { 'ruby', 'rails' },
+        cmake = { 'cmake' }
       }
     }
   }
