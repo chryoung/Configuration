@@ -15,7 +15,7 @@ vim: vimrc
 	@echo Start vim and run :PluginInstall manually
 
 tmux: tmux.conf
-	if [ ! -e /usr/share/powerline/bindings/tmux/powerline.conf ]; then sudo apt cp powerline; fi
+	if [ ! -e /usr/share/powerline/bindings/tmux/powerline.conf ]; then sudo apt install powerline; fi
 	cp tmux.conf ${HOME}/.tmux.conf
 
 simple_tmux: tmux.conf simple_tmux_theme.conf

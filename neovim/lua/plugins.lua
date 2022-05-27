@@ -67,13 +67,6 @@ return packer.startup(function()
     cmd = { 'G', 'Git' }
   }
 
-  -- File search
-  use {
-    'Yggdroot/LeaderF',
-    run = ':LeaderfInstallCExtension',
-    cmd = { 'Leaderf', 'LeaderfFile', 'LeaderfBuffer' }
-  }
-
   -- Commenet code. Type gcc to comment a line
   use { 'tpope/vim-commentary', event = 'VimEnter' }
 
