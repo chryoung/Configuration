@@ -5,8 +5,9 @@ convenience.
 
 ## Usage
 
-- **tmux.conf**: `make tmux`
-- **tmux without Powerline**: `make simple_tmux`
-- **vimrc**: `make vim`
-- **neovim**: `make neovim`
+- **all**: `./install.pl --all`
+- **tmux.conf**: `./install.pl tmux`
+- **vimrc**: `./install.pl vim`
+- **neovim**: `./install.pl neovim`
+- **fish**: `./install.pl fish`
 
