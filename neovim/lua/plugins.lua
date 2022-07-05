@@ -182,11 +182,7 @@ return packer.startup(function()
     requires = { { 'nvim-lua/plenary.nvim' } },
     Event = 'VimEnter'
   }
-
-  use {
-    'mrjones2014/dash.nvim',
-    run = 'make install',
-    Event = 'VimEnter'
-  }
+<<<ycm_plugin>>>
+<<<dash_plugin>>>
 
 end)

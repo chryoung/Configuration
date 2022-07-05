@@ -130,10 +130,9 @@ nnoremap <leader>f <cmd>lua require('telescope.builtin').find_files()<cr>
 nnoremap <leader>g <cmd>lua require('telescope.builtin').live_grep()<cr>
 nnoremap <leader>b <cmd>lua require('telescope.builtin').buffers()<cr>
 nnoremap <leader>h <cmd>lua require('telescope.builtin').help_tags()<cr>
-
-" Dash
-nnoremap <Leader>dq :Dash<CR>
-nnoremap <Leader>dw :DashWord<CR>
+<<<dash_config>>>
 
 " Disable Markdown fold
 let g:vim_markdown_folding_disabled = 1
+<<<ycm_config>>>
+

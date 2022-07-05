@@ -29,12 +29,12 @@ Plugin 'lukas-reineke/indent-blankline.nvim'
 
 Plugin 'christoomey/vim-tmux-navigator'
 
-Plugin 'rizzatti/dash.vim'
-
 " fzz
 Plugin 'junegunn/fzf'
 
 Plugin 'junegunn/fzf.vim'
+
+<<<dash_plugin>>>
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -148,5 +148,4 @@ command ReloadConfig source $MYVIMRC
 nnoremap <silent> <Leader>f :Files<CR>
 nnoremap <silent> <Leader>b :Buffers<CR>
 
-" Dash
-nnoremap <silent> <Leader>dw :Dash<CR>
+<<<dash_config>>>
