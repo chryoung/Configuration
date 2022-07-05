@@ -9,6 +9,7 @@ use Getopt::Long;
 
 # Global flags
 my $ENABLE_YCM;
+my $ENABLE_DASH;
 my $INSTALL_ALL;
 
 sub fill_template {
@@ -54,8 +55,8 @@ sub install_neovim {
 
   # Compose init.vim
   my %init_placeholder_value;
-  # Configure Dash if running on macOS
-  $init_placeholder_value{"dash_config"} = <<'DASH_CONFIG' if $^O eq "darwin";
+  # Configure Dash
+  $init_placeholder_value{"dash_config"} = <<'DASH_CONFIG' if $ENABLE_DASH;
 
 " Dash
 nnoremap <Leader>dq :Dash<CR>
@@ -76,8 +77,8 @@ YCM_CONFIG
 
   # Compose plugins.lua
   my %plugin_placeholder_value;
-  # Install Dash plugin for macOS
-  $plugin_placeholder_value{"dash_plugin"} = <<'DASH_PLUGIN' if $^O eq "darwin";
+  # Install Dash plugin
+  $plugin_placeholder_value{"dash_plugin"} = <<'DASH_PLUGIN' if $ENABLE_DASH;
 
   use {
     'mrjones2014/dash.nvim',
@@ -112,13 +113,13 @@ sub install_vim {
   # Compose .vimrc
   my %vimrc_placeholder_value;
 
-  # Install Dash plugin for macOS
-  $vimrc_placeholder_value{"dash_plugin"} = <<'VIMRC_DASH_PLUGIN';
+  # Install Dash plugin
+  $vimrc_placeholder_value{"dash_plugin"} = <<'VIMRC_DASH_PLUGIN' if $ENABLE_DASH;
 
 Plugin 'rizzatti/dash.vim'
 VIMRC_DASH_PLUGIN
 
-  $vimrc_placeholder_value{"dash_config"} = <<'VIMRC_DASH_CONFIG';
+  $vimrc_placeholder_value{"dash_config"} = <<'VIMRC_DASH_CONFIG' if $ENABLE_DASH;
 
 " Dash
 nnoremap <silent> <Leader>dw :Dash<CR>
@@ -182,16 +183,17 @@ sub install_fish {
 }
 
 GetOptions(
-  "ycm" => \$ENABLE_YCM,
-  "all" => \$INSTALL_ALL
+  "ycm"  => \$ENABLE_YCM,
+  "dash" => \$ENABLE_DASH,
+  "all"  => \$INSTALL_ALL
 );
 my @install_targets = @ARGV;
 
 my %all_targets = (
-  "vim" => \&install_vim,
+  "vim"    => \&install_vim,
   "neovim" => \&install_neovim,
-  "tmux" => \&install_tmux,
-  "fish" => \&install_fish,
+  "tmux"   => \&install_tmux,
+  "fish"   => \&install_fish,
 );
 
 if ($INSTALL_ALL) {
