@@ -70,10 +70,10 @@ DASH_CONFIG
 let g:ycm_key_invoke_completion = '<C-x>'
 YCM_CONFIG
 
-	fill_template("$neovim_config_home/init.vim", "neovim/init.vim", \%init_placeholder_value);
+  fill_template("$neovim_config_home/init.vim", "neovim/init.vim", \%init_placeholder_value);
 
   # Copy config.lua
-	`cp neovim/lua/config.lua $neovim_config_home/lua`;
+  `cp neovim/lua/config.lua $neovim_config_home/lua`;
 
   # Compose plugins.lua
   my %plugin_placeholder_value;
@@ -103,12 +103,12 @@ YCM_PLUGIN
   mkdir_unless_exists("$neovim_config_home/ftplugin");
   `cp ftplugin/*.vim $neovim_config_home/ftplugin`;
 
-	print "Start nvim and run :PackerSync manually\n";
+  print "Start nvim and run :PackerSync manually\n";
 }
 
 sub install_vim {
   # Install Vundle
-	`git clone --depth=1 https://github.com/VundleVim/Vundle.vim.git ${HOME}/.vim/bundle/Vundle.vim` unless -d "${HOME}/.vim/bundle/Vundle.vim";
+  `git clone --depth=1 https://github.com/VundleVim/Vundle.vim.git ${HOME}/.vim/bundle/Vundle.vim` unless -d "${HOME}/.vim/bundle/Vundle.vim";
 
   # Compose .vimrc
   my %vimrc_placeholder_value;
@@ -131,7 +131,7 @@ VIMRC_DASH_CONFIG
   mkdir_unless_exists("${HOME}/.vim/ftplugin");
   `cp ftplugin/*.vim ${HOME}/.vim/ftplugin`;
 
-	print "Start vim and run :PluginInstall manually\n";
+  print "Start vim and run :PluginInstall manually\n";
 }
 
 sub install_tmux {
