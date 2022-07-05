@@ -4,7 +4,6 @@ use warnings;
 use strict;
 
 use Env qw/HOME/;
-use File::Temp qw/tempfile/;
 use Fcntl qw/SEEK_SET/;
 use Getopt::Long;
 
@@ -154,9 +153,17 @@ my %all_targets = (
 
 if ($install_targets[0] eq "all") {
   install_neovim;
+  print "Finish install neovim\n";
+
   install_vim;
+  print "Finish install vim\n";
+
   install_tmux;
+  print "Finish install tmux\n";
+
   install_fish;
+  print "Finish install fish\n";
+
   print "Finish installing all\n";
 } else {
   foreach my $target (@install_targets) {

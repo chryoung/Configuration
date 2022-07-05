@@ -17,7 +17,7 @@ Plugin 'VundleVim/Vundle.vim'
 Plugin 'tpope/vim-fugitive'
 
 " Theme
-Plugin 'chriskempson/base16-vim'
+Plugin 'base16-project/base16-vim'
 
 " File explorer
 Plugin 'scrooloose/nerdtree'
