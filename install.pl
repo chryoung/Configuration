@@ -64,6 +64,7 @@ DASH_CONFIG
 
   # Configure ycm plugin
   $init_placeholder_value{"ycm_config"} = <<'YCM_CONFIG' if $ENABLE_YCM;
+
 " YouCompleteMe
 let g:ycm_key_invoke_completion = '<C-x>'
 YCM_CONFIG
