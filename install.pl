@@ -187,6 +187,7 @@ GetOptions(
   "dash" => \$ENABLE_DASH,
   "all"  => \$INSTALL_ALL
 );
+
 my @install_targets = @ARGV;
 
 my %all_targets = (
