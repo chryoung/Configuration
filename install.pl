@@ -25,7 +25,7 @@ sub fill_template {
     if (/^<<<([^>]+)>>>$/) {
       my $placeholder = $1;
       if (exists $placeholder_value->{$placeholder}) {
-        printf $dest_fh "%s\n", $placeholder_value->{$placeholder};
+        print $dest_fh $placeholder_value->{$placeholder};
       }
     } else {
       print $dest_fh $_;
@@ -157,11 +157,11 @@ if ($install_targets[0] eq "all") {
   install_vim;
   install_tmux;
   install_fish;
-  print "Finish installing all";
+  print "Finish installing all\n";
 } else {
   foreach my $target (@install_targets) {
     &{$all_targets{$target}} if exists $all_targets{$target};
-    print "Finish installing $target";
+    print "Finish installing $target\n";
   }
 }
 
