@@ -134,5 +134,9 @@ nnoremap <leader>h <cmd>lua require('telescope.builtin').help_tags()<cr>
 
 " Disable Markdown fold
 let g:vim_markdown_folding_disabled = 1
+
+" Ignore folder for vimgrep
+set wildignore+=*/node_modules/**
+set wildignore+=*/venv/**
 <<<ycm_config>>>
 

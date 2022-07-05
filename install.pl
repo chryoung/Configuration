@@ -4,13 +4,13 @@ use warnings;
 use strict;
 
 use Env qw/HOME/;
-use Getopt::Long;
 use File::Temp qw/tempfile/;
 use Fcntl qw/SEEK_SET/;
+use Getopt::Long;
 
 my $ENABLE_YCM;
 
-sub write_from_template {
+sub fill_template {
   my $dest = shift;
   my $template = shift;
   my $placeholder_value = shift // {};
@@ -21,7 +21,8 @@ sub write_from_template {
     or return 0;
 
   while (<$template_fh>) {
-    if (/^<<<([^>]+)>>>$/)
+    # If the line is a placeholder: <<<placerholder>>>
+    if (/^<<<([^>]+)>>>$/) {
       my $placeholder = $1;
       if (exists $placeholder_value->{$placeholder}) {
         printf $dest_fh "%s\n", $placeholder_value->{$placeholder};
@@ -37,18 +38,18 @@ sub write_from_template {
   return 1;
 }
 
-sub install_dash_plugin_for_vim {
-  replace_placeholder("${HOME}/.vimrc", "dash_plugin", "Plugin 'rizzatti/dash.vim'");
-  replace_placeholder("${HOME}/.vimrc", "dash_config", "\"Dash\nnnoremap <silent> <Leader>dw :Dash<CR>");
-}
-
 sub install_neovim {
-  `mkdir -p ${HOME}/.config/nvim/lua` unless -d "${HOME}/.config/nvim/lua";
+  my $neovim_config_home = "${HOME}/.config/nvim/";
 
+  # Make configuration directory
+  `mkdir -p $neovim_config_home/lua` unless -d "$neovim_config_home/lua";
+
+  # Install Packer
   `git clone --depth=1 https://github.com/wbthomason/packer.nvim ${HOME}/.local/share/nvim/site/pack/packer/start/packer.nvim` unless -e "${HOME}/.local/share/nvim/site/pack/packer/start/packer.nvim";
 
   # Composite config
   my %init_placeholder_value;
+  # Config Dash if running on macOS
   $init_placeholder_value{"dash_config"} = <<DASH_CONFIG if $^O eq "darwin";
 
 " Dash
@@ -56,17 +57,20 @@ nnoremap <Leader>dq :Dash<CR>
 nnoremap <Leader>dw :DashWord<CR>
 DASH_CONFIG
 
+  # Config ycm plugin
   $init_placeholder_value{"ycm_config"} = <<YCM_CONFIG if $ENABLE_YCM;
 " YouCompleteMe
 let g:ycm_key_invoke_completion = '<C-x>'
 YCM_CONFIG
 
-	write_from_template("${HOME}/.config/nvim/", "neovim/init.vim", \%init_placeholder_value);
+	fill_template("$neovim_config_home/init.vim", "neovim/init.vim", \%init_placeholder_value);
 
-	`cp neovim/lua/config.lua ${HOME}/.config/nvim/lua/`;
+  # Copy lua config
+	`cp neovim/lua/config.lua $neovim_config_home/lua`;
 
   # Composite plugins
   my %plugin_placeholder_value;
+  # Enable Dash if running on macOS
   $plugin_placeholder_value{"dash_plugin"} = <<DASH_PLUGIN if $^O eq "darwin";
 
   use {
@@ -76,22 +80,48 @@ YCM_CONFIG
   }
 DASH_PLUGIN
 
+  # Enable ycm plugin
   $plugin_placeholder_value{"ycm_plugin"} = <<YCM_PLUGIN if $ENABLE_YCM;
 
   use {
     'ycm-core/YouCompleteMe',
-    ft = { 'python', 'c', 'cpp', 'rust' }
+    ft = { 'python', 'python3', 'c', 'cpp', 'rust' },
+    cmd = 'python3 install.py --clangd-completer --rust-completer'
   }
 YCM_PLUGIN
 
-  write_from_template("${HOME}/.config/nvim/lua/plugins.lua", "neovim/lua/plugins.lua", \%plugin_placeholder_value);
+  fill_template("$neovim_config_home/lua/plugins.lua", "neovim/lua/plugins.lua", \%plugin_placeholder_value);
+
+  # Install ftplugin
+  `mkdir $neovim_config_home/ftplugin` unless -d "$neovim_config_home/ftplugin";
+  `cp ftplugin/*.vim $neovim_config_home/ftplugin`;
 
 	print "Start nvim and run :PackerSync manually\n";
 }
 
 sub install_vim {
+  # Install Vundle
 	`git clone --depth=1 https://github.com/VundleVim/Vundle.vim.git ${HOME}/.vim/bundle/Vundle.vim` unless -d "${HOME}/.vim/bundle/Vundle.vim";
-	`cp vimrc ${HOME}/.vimrc`;
+
+  # Make vim config
+  my %vimrc_placeholder_value;
+  $vimrc_placeholder_value{"dash_plugin"} = <<VIMRC_DASH_PLUGIN;
+
+Plugin 'rizzatti/dash.vim'
+VIMRC_DASH_PLUGIN
+
+  $vimrc_placeholder_value{"dash_config"} = <<VIMRC_DASH_CONFIG;
+
+" Dash
+nnoremap <silent> <Leader>dw :Dash<CR>
+VIMRC_DASH_CONFIG
+
+  fill_template("${HOME}/.vimrc", "vimrc", \%vimrc_placeholder_value);
+
+  # Install ftplugin
+  `mkdir ${HOME}/.vim/ftplugin` unless -d "${HOME}/.vim/ftplugin";
+  `cp ftplugin/*.vim ${HOME}/.vim/ftplugin`;
+
 	print "Start vim and run :PluginInstall manually\n";
 }
 
@@ -106,6 +136,11 @@ sub install_simple_tmux {
 	`cat simple_tmux_theme.conf >> ${HOME}/.tmux.conf`;
 }
 
+sub install_fish {
+  `mkdir -p ${HOME}/.config/fish` unless -d "${HOME}/.config/fish";
+  `cp -r fish/* ${HOME}/.config/fish`;
+}
+
 GetOptions("ycm" => \$ENABLE_YCM);
 my @install_targets = @ARGV;
 
@@ -114,15 +149,19 @@ my %all_targets = (
   "neovim" => \&install_neovim,
   "tmux" => \&install_tmux,
   "simple_tmux" => \&install_simple_tmux,
+  "fish" => \&install_fish,
 );
 
 if ($install_targets[0] eq "all") {
   install_neovim;
   install_vim;
   install_tmux;
+  install_fish;
+  print "Finish installing all";
 } else {
   foreach my $target (@install_targets) {
     &{$all_targets{$target}} if exists $all_targets{$target};
+    print "Finish installing $target";
   }
 }
 

@@ -33,7 +33,6 @@ Plugin 'christoomey/vim-tmux-navigator'
 Plugin 'junegunn/fzf'
 
 Plugin 'junegunn/fzf.vim'
-
 <<<dash_plugin>>>
 
 " All of your Plugins must be added before the following line
