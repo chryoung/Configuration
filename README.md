@@ -5,5 +5,8 @@ convenience.
 
 ## Usage
 
-- **tmux.conf**: For tmux. Copy to `~/.tmux.conf`
-- **vimrc**: For vim. Copy to `~/.vimrc`
+- **tmux.conf**: `make tmux`
+- **tmux without Powerline**: `make simple_tmux`
+- **vimrc**: `make vim`
+- **neovim**: `make neovim`
+
