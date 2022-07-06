@@ -98,7 +98,7 @@ DASH_CONFIG_LUA
     $config_lua_placeholder_value{"lsp_config"} .= "require'lspconfig'.perlpls.setup{}\n";
   }
 
-  print "Enable PyRight LSP for Python? [y/N]: \n";
+  print "Enable Pyright LSP for Python? [y/N]: \n";
   chomp(my $enable_pyright = <STDIN>);
   if ($enable_pls eq "y") {
     $config_lua_placeholder_value{"lsp_config"} .= "require'lspconfig'.pyright.setup{}\n";
