@@ -183,6 +183,7 @@ return packer.startup(function()
     requires = { { 'nvim-lua/plenary.nvim' } },
     Event = 'VimEnter'
   }
+<<<lsp_plugin>>>
 <<<ycm_plugin>>>
 <<<dash_plugin>>>
 

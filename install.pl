@@ -10,6 +10,7 @@ use Getopt::Long;
 # Global flags
 my $ENABLE_YCM;
 my $ENABLE_DASH;
+my $ENABLE_LSP;
 my $INSTALL_ALL;
 
 sub fill_template {
@@ -67,13 +68,30 @@ DASH_CONFIG
   $init_placeholder_value{"ycm_config"} = <<'YCM_CONFIG' if $ENABLE_YCM;
 
 " YouCompleteMe
-let g:ycm_key_invoke_completion = '<C-x>'
+let g:ycm_key_invoke_completion = '<C-m>'
 YCM_CONFIG
 
   fill_template("$neovim_config_home/init.vim", "neovim/init.vim", \%init_placeholder_value);
 
-  # Copy config.lua
-  `cp neovim/lua/config.lua $neovim_config_home/lua`;
+  # Compose config.lua
+  # Configure Dash plugin for telescope
+  my %config_lua_placeholder_value;
+  $config_lua_placeholder_value{"dash_config"} = <<'DASH_CONFIG_LUA';
+telescope.setup({
+  extensions = {
+    dash = {
+      search_engine = 'google',
+      file_type_keywords = {
+        ruby = { 'ruby', 'rails' },
+        cmake = { 'cmake' },
+        python = { 'python3', 'python' },
+      }
+    }
+  }
+})
+DASH_CONFIG_LUA
+
+  fill_template("$neovim_config_home/lua/config.lua", "neovim/lua/config.lua", \%config_lua_placeholder_value);
 
   # Compose plugins.lua
   my %plugin_placeholder_value;
@@ -87,7 +105,13 @@ YCM_CONFIG
   }
 DASH_PLUGIN
 
-  # Enable ycm plugin
+  # Install lsp plugin
+  $plugin_placeholder_value{"lsp_plugin"} = <<'LSP_PLUGIN' if $ENABLE_LSP;
+
+  use { 'neovim/nvim-lspconfig' }
+LSP_PLUGIN
+
+  # Install ycm plugin
   $plugin_placeholder_value{"ycm_plugin"} = <<'YCM_PLUGIN' if $ENABLE_YCM;
 
   use {
@@ -141,7 +165,7 @@ sub install_tmux {
   if ($^O eq "linux") {
     unless (-e $linux_powerline) {
       print "Installing Powerline...\n";
-      `sudo apt install powerline` 
+      `sudo apt-get -y install powerline` 
     }
 
     print "Use Powerline for tmux theme\n";
@@ -185,6 +209,7 @@ sub install_fish {
 GetOptions(
   "ycm"  => \$ENABLE_YCM,
   "dash" => \$ENABLE_DASH,
+  "lsp"  => \$ENABLE_LSP,
   "all"  => \$INSTALL_ALL
 );
 
