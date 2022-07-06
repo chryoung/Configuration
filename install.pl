@@ -52,7 +52,8 @@ sub install_neovim {
   mkdir_unless_exists("$neovim_config_home/lua");
 
   # Install Packer
-  `git clone --depth=1 https://github.com/wbthomason/packer.nvim ${HOME}/.local/share/nvim/site/pack/packer/start/packer.nvim` unless -e "${HOME}/.local/share/nvim/site/pack/packer/start/packer.nvim";
+  my $packer_vim = "${HOME}/.local/share/nvim/site/pack/packer/start/packer.nvim";
+  `git clone --depth=1 https://github.com/wbthomason/packer.nvim $packer_vim` unless -e $packer_vim;
 
   # Compose init.vim
   my %init_placeholder_value;
@@ -76,7 +77,7 @@ YCM_CONFIG
   # Compose config.lua
   # Configure Dash plugin for telescope
   my %config_lua_placeholder_value;
-  $config_lua_placeholder_value{"dash_config"} = <<'DASH_CONFIG_LUA';
+  $config_lua_placeholder_value{"dash_config"} = <<'DASH_CONFIG_LUA' if $ENABLE_DASH;
 telescope.setup({
   extensions = {
     dash = {
@@ -92,18 +93,19 @@ telescope.setup({
 DASH_CONFIG_LUA
 
   # Configure LSP
-  print "Enable PLS LSP for Perl? [y/N]: \n";
-  chomp(my $enable_pls = <STDIN>);
-  if ($enable_pls eq "y") {
-    $config_lua_placeholder_value{"lsp_config"} .= "require'lspconfig'.perlpls.setup{}\n";
-  }
+  if ($ENABLE_LSP) {
+    print "Enable PLS LSP for Perl on neovim? [y/N]: \n";
+    chomp(my $enable_pls = <STDIN>);
+    if ($enable_pls eq "y") {
+      $config_lua_placeholder_value{"lsp_config"} .= "require'lspconfig'.perlpls.setup{}\n";
+    }
 
-  print "Enable Pyright LSP for Python? [y/N]: \n";
-  chomp(my $enable_pyright = <STDIN>);
-  if ($enable_pls eq "y") {
-    $config_lua_placeholder_value{"lsp_config"} .= "require'lspconfig'.pyright.setup{}\n";
+    print "Enable Pyright LSP for Python on neovim? [y/N]: \n";
+    chomp(my $enable_pyright = <STDIN>);
+    if ($enable_pyright eq "y") {
+      $config_lua_placeholder_value{"lsp_config"} .= "require'lspconfig'.pyright.setup{}\n";
+    }
   }
-
 
   fill_template("$neovim_config_home/lua/config.lua", "neovim/lua/config.lua", \%config_lua_placeholder_value);
 
