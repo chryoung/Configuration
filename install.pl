@@ -91,6 +91,20 @@ telescope.setup({
 })
 DASH_CONFIG_LUA
 
+  # Configure LSP
+  print "Enable PLS LSP for Perl? [y/N]: \n";
+  chomp(my $enable_pls = <STDIN>);
+  if ($enable_pls eq "y") {
+    $config_lua_placeholder_value{"lsp_config"} .= "require'lspconfig'.perlpls.setup{}\n";
+  }
+
+  print "Enable PyRight LSP for Python? [y/N]: \n";
+  chomp(my $enable_pyright = <STDIN>);
+  if ($enable_pls eq "y") {
+    $config_lua_placeholder_value{"lsp_config"} .= "require'lspconfig'.pyright.setup{}\n";
+  }
+
+
   fill_template("$neovim_config_home/lua/config.lua", "neovim/lua/config.lua", \%config_lua_placeholder_value);
 
   # Compose plugins.lua
@@ -105,7 +119,7 @@ DASH_CONFIG_LUA
   }
 DASH_PLUGIN
 
-  # Install lsp plugin
+  # Install LSP plugin
   $plugin_placeholder_value{"lsp_plugin"} = <<'LSP_PLUGIN' if $ENABLE_LSP;
 
   use { 'neovim/nvim-lspconfig' }
