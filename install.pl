@@ -121,6 +121,19 @@ DASH_CONFIG_LUA
   }
 DASH_PLUGIN
 
+  # Install impatient plugin if Dash is not installed
+  # impatient plugin and Dash plugin have conflicts
+  # Dash cannot require libdash_nvim if impatient is installed
+  # and the require command is hooked
+  $plugin_placeholder_value{"impatient_plugin"} = <<'IMPATIENT_PLUGIN' unless $ENABLE_DASH;
+  -- Speed up NeoVim startup
+  use {
+    'lewis6991/impatient.nvim',
+    config = [[require('impatient')]]
+  }
+
+IMPATIENT_PLUGIN
+
   # Install LSP plugin
   $plugin_placeholder_value{"lsp_plugin"} = <<'LSP_PLUGIN' if $ENABLE_LSP;
 

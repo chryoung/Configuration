@@ -12,12 +12,7 @@ packer.init({
 })
 
 return packer.startup(function()
-  -- Speed up NeoVim startup
-  use {
-    'lewis6991/impatient.nvim',
-    config = [[require('impatient')]]
-  }
-
+<<<impatient_plugin>>>
   -- Packer can manage itself
   use 'wbthomason/packer.nvim'
 
