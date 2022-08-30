@@ -99,7 +99,7 @@ DASH_CONFIG_LUA
     chomp(my $enable_pls = <STDIN>);
     if ($enable_pls eq "y") {
       $config_lua_placeholder_value{"lsp_config"} .= "require'lspconfig'.perlpls.setup{}\n";
-      print "Enabled. Please remember to run `cpan install PLS` after setup.\n";
+      print "Enabled. Please remember to run `sudo cpan install -f PLS` after setup.\n";
     }
 
     print "Enable Pyright LSP for Python on neovim? [y/N]: \n";
