@@ -12,6 +12,7 @@ my $ENABLE_YCM;
 my $ENABLE_DASH;
 my $ENABLE_LSP;
 my $INSTALL_ALL;
+my $SHOW_HELP;
 
 sub fill_template {
   my $dest = shift;
@@ -98,6 +99,7 @@ DASH_CONFIG_LUA
     chomp(my $enable_pls = <STDIN>);
     if ($enable_pls eq "y") {
       $config_lua_placeholder_value{"lsp_config"} .= "require'lspconfig'.perlpls.setup{}\n";
+      print "Enabled. Please remember to run `cpan install PLS` after setup.\n";
     }
 
     print "Enable Pyright LSP for Python on neovim? [y/N]: \n";
@@ -239,7 +241,8 @@ GetOptions(
   "ycm"  => \$ENABLE_YCM,
   "dash" => \$ENABLE_DASH,
   "lsp"  => \$ENABLE_LSP,
-  "all"  => \$INSTALL_ALL
+  "all"  => \$INSTALL_ALL,
+  "h"    => \$SHOW_HELP,
 );
 
 my @install_targets = @ARGV;
@@ -251,7 +254,20 @@ my %all_targets = (
   "fish"   => \&install_fish,
 );
 
-if ($INSTALL_ALL) {
+if ($SHOW_HELP) {
+    print "install.pl [options] <targets>\n";
+    print "targets:\n";
+    foreach my $target (sort keys %all_targets) {
+        print "    $target\n";
+    }
+
+    print "options:\n";
+    print "    --ycm install ycm to neovim\n";
+    print "    --dash install dash extension to vim and neovim\n";
+    print "    --lsp enable LSP support for neovim\n";
+    print "    --all install all targets\n";
+    print "    --h show this help\n";
+} elsif ($INSTALL_ALL) {
   install_neovim;
   print "Finish install neovim\n";
 
