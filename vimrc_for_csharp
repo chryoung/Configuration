@@ -1,0 +1,306 @@
+" Plugin {{{
+call plug#begin()
+
+" Appearance
+Plug 'chriskempson/base16-vim'
+Plug 'itchyny/lightline.vim'
+Plug 'maximbaz/lightline-ale'
+Plug 'Yggdroot/indentLine'
+
+" Browsing
+Plug 'preservim/nerdtree'
+Plug 'jlanzarotta/bufexplorer'
+Plug 'junegunn/fzf'
+Plug 'junegunn/fzf.vim'
+
+" Movement
+Plug 'easymotion/vim-easymotion'
+
+" Git
+Plug 'tpope/vim-fugitive'
+
+" Async
+Plug 'skywind3000/asyncrun.vim'
+
+" General language support
+Plug 'dense-analysis/ale'
+Plug 'prabirshrestha/asyncomplete.vim'
+
+" C-sharp support
+Plug 'OmniSharp/omnisharp-vim'
+Plug 'nickspoons/vim-sharpenup'
+Plug 'yami-beta/asyncomplete-omni.vim'
+
+call plug#end()
+" }}}
+
+" General settings {{{
+set guifont=Consolas:h11
+
+if &t_Co > 2 || has("gui_running")
+  " Switch on highlighting the last used search pattern.
+  set hlsearch
+endif
+
+if has("gui_running")
+  color base16-material
+endif
+
+"File encoding
+set encoding=utf-8
+scriptencoding utf-8
+
+" Tab settings
+set tabstop=4
+set softtabstop=4
+set shiftwidth=4
+set expandtab
+
+" Always show status line
+set laststatus=2
+
+" Relative line number
+set rnu
+
+" Case-insensitive search
+set ignorecase
+
+" Space as leader
+nnoremap <Space> <Nop>
+nmap <Space> <Leader>
+
+" Colon map
+nnoremap <Leader><Space> :
+
+" Use marker to fold
+set foldmethod=marker
+
+" Let Y behave like C and D
+nnoremap Y y$
+
+" Centre the n, N and J
+nnoremap n nzzzv
+nnoremap N Nzzzv
+nnoremap J mzJ`z
+
+" Undo break points
+inoremap , ,<C-g>u
+inoremap . .<C-g>u
+inoremap ! !<C-g>u
+inoremap ? ?<C-g>u
+inoremap _ _<C-g>u
+inoremap - -<C-g>u
+inoremap ( (<C-g>u
+inoremap ) )<C-g>u
+inoremap [ [<C-g>u
+inoremap ] ]<C-g>u
+
+" Register j, k move into C-i and C-o
+nnoremap <expr> k (v:count > 5 ? "m'" . v:count : "") . 'k'
+nnoremap <expr> j (v:count > 5 ? "m'" . v:count : "") . 'j'
+
+" Move lines around
+vnoremap J :m '>+1<CR>gv=gv
+vnoremap K :m '<-2<CR>gv=gv
+inoremap <C-j> <ESC>:m .+1<CR>==
+inoremap <C-k> <ESC>:m .-2<CR>==
+nnoremap <Leader>mj :m .+1<CR>==
+nnoremap <Leader>mk :m .-2<CR>==
+
+" Toggle quickfix window
+function! ToggleQuickFix()
+  if empty(filter(getwininfo(), 'v:val.quickfix'))
+    copen
+  else
+    cclose
+  endif
+endfunction
+
+nnoremap <silent> <C-q> :call ToggleQuickFix()<CR>
+
+" Jump between quickfix items
+nnoremap <silent> <Leader>fj :cnext<CR>
+nnoremap <silent> <Leader>fk :cprev<CR>
+
+" NerdTree shortcuts
+nnoremap <silent> <F2> :NERDTreeToggle<CR>
+
+" Redraw screen and turn off the current highlight search
+nnoremap <silent> <Leader>l :nohl<CR><C-L>
+
+" wq Map
+nnoremap <silent> <Leader>z :wq<CR>
+nnoremap <silent> <Leader>q :q<CR>
+nnoremap <silent> <Leader>w :w<CR>
+
+" Redraw screen and turn off the current highlight search
+nnoremap <silent> <C-L> :nohl<CR><C-L>
+
+" Configuration commands
+command Econfig edit $MYVIMRC
+command ReloadConfig source $MYVIMRC
+
+" Window switching
+nnoremap <silent> <C-h> <C-w>h
+nnoremap <silent> <C-j> <C-w>j
+nnoremap <silent> <C-k> <C-w>k
+nnoremap <silent> <C-l> <C-w>l
+" }}}
+
+" Easymotion {{{
+map <Leader>jc <Plug>(easymotion-bd-f)
+map <Leader>jl <Plug>(easymotion-bd-jk)
+map <Leader>jw <Plug>(easymotion-bd-w)
+" }}}
+
+" fzf.vim {{{
+nnoremap <silent> <Leader>f :Files<CR>
+nnoremap <silent> <Leader>b :Buffers<CR>
+" }}}
+
+" asynccomplete {{{
+autocmd User asyncomplete_setup call asyncomplete#register_source(asyncomplete#sources#omni#get_source_options({
+\ 'name': 'omni',
+\ 'allowlist': ['*'],
+\ 'blocklist': ['c', 'cpp', 'html'],
+\ 'completor': function('asyncomplete#sources#omni#completor'),
+\ 'config': {
+\   'show_source_kind': 1,
+\ },
+\ }))
+
+let g:asyncomplete_auto_popup = 0
+let g:asyncomplete_auto_completeopt = 0
+
+function! s:check_back_space() abort
+    let col = col('.') - 1
+    return !col || getline('.')[col - 1]  =~ '\s'
+endfunction
+
+inoremap <silent><expr> <TAB>
+  \ pumvisible() ? "\<C-n>" :
+  \ <SID>check_back_space() ? "\<TAB>" :
+  \ asyncomplete#force_refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+" }}}
+
+" Ale {{{
+let g:ale_completion_enabled = 0
+let g:ale_sign_error = '•'
+let g:ale_sign_warning = '•'
+let g:ale_sign_info = '·'
+let g:ale_sign_style_error = '·'
+let g:ale_sign_style_warning = '·'
+
+let g:ale_linters = { 'cs': ['OmniSharp'] }
+" }}}
+
+" Omnisharp {{{
+" Don't autoselect first omnicomplete option, show options even if there is only
+" one (so the preview documentation is accessible). Remove 'preview', 'popup'
+" and 'popuphidden' if you don't want to see any documentation whatsoever.
+" Note that neovim does not support `popuphidden` or `popup` yet:
+" https://github.com/neovim/neovim/issues/10996
+if has('patch-8.1.1880')
+  set completeopt=longest,menuone,popuphidden
+  " Highlight the completion documentation popup background/foreground the same as
+  " the completion menu itself, for better readability with highlighted
+  " documentation.
+  set completepopup=highlight:Pmenu,border:off
+else
+  set completeopt=longest,menuone,preview
+  " Set desired preview window height for viewing documentation.
+  set previewheight=5
+endif
+
+let g:OmniSharp_popup_position = 'peek'
+
+let g:OmniSharp_popup_options = {
+\ 'highlight': 'Normal',
+\ 'padding': [0],
+\ 'border': [1],
+\ 'borderchars': ['─', '│', '─', '│', '╭', '╮', '╯', '╰'],
+\ 'borderhighlight': ['ModeMsg']
+\}
+
+let g:OmniSharp_popup_mappings = {
+\ 'sigNext': '<C-n>',
+\ 'sigPrev': '<C-p>',
+\ 'pageDown': ['<C-f>', '<PageDown>'],
+\ 'pageUp': ['<C-b>', '<PageUp>']
+\}
+
+let g:OmniSharp_highlight_groups = {
+\ 'ExcludedCode': 'NonText'
+\}
+
+augroup ColorschemePreferences
+  autocmd!
+  " These preferences clear some gruvbox background colours, allowing transparency
+  autocmd ColorScheme * highlight Normal     ctermbg=NONE guibg=NONE
+  autocmd ColorScheme * highlight SignColumn ctermbg=NONE guibg=NONE
+  autocmd ColorScheme * highlight Todo       ctermbg=NONE guibg=NONE
+  " Link ALE sign highlights to similar equivalents without background colours
+  autocmd ColorScheme * highlight link ALEErrorSign   WarningMsg
+  autocmd ColorScheme * highlight link ALEWarningSign ModeMsg
+  autocmd ColorScheme * highlight link ALEInfoSign    Identifier
+augroup END
+" }}}
+
+" Sharpenup {{{
+" All sharpenup mappings will begin with `<Space>os`, e.g. `<Space>osgd` for
+" :OmniSharpGotoDefinition
+let g:sharpenup_map_prefix = '<Space>os'
+
+let g:sharpenup_statusline_opts = { 'Text': '%s (%p/%P)' }
+let g:sharpenup_statusline_opts.Highlight = 0
+
+augroup OmniSharpIntegrations
+  autocmd!
+  autocmd User OmniSharpProjectUpdated,OmniSharpReady call lightline#update()
+augroup END
+" }}}
+
+" Lightline: {{{
+let g:lightline = {
+\ 'colorscheme': 'wombat',
+\ 'active': {
+\   'right': [
+\     ['linter_checking', 'linter_errors', 'linter_warnings', 'linter_infos', 'linter_ok'],
+\     ['lineinfo'], ['percent'],
+\     ['fileformat', 'fileencoding', 'filetype', 'sharpenup']
+\   ]
+\ },
+\ 'inactive': {
+\   'right': [['lineinfo'], ['percent'], ['sharpenup']]
+\ },
+\ 'component': {
+\   'sharpenup': sharpenup#statusline#Build()
+\ },
+\ 'component_expand': {
+\   'linter_checking': 'lightline#ale#checking',
+\   'linter_infos': 'lightline#ale#infos',
+\   'linter_warnings': 'lightline#ale#warnings',
+\   'linter_errors': 'lightline#ale#errors',
+\   'linter_ok': 'lightline#ale#ok'
+  \  },
+  \ 'component_type': {
+  \   'linter_checking': 'right',
+  \   'linter_infos': 'right',
+  \   'linter_warnings': 'warning',
+  \   'linter_errors': 'error',
+  \   'linter_ok': 'right'
+\  }
+\}
+" Use unicode chars for ale indicators in the statusline
+let g:lightline#ale#indicator_checking = "\uf110 "
+let g:lightline#ale#indicator_infos = "\uf129 "
+let g:lightline#ale#indicator_warnings = "\uf071 "
+let g:lightline#ale#indicator_errors = "\uf05e "
+let g:lightline#ale#indicator_ok = "\uf00c "
+" }}}
+
+" Misc {{{
+" msbuild error format with option -nologo "-clp:ErrorsOnly;NoSummary;"
+" set errorformat=\ %#%f(%l\\\,%c):\ %m
+" }}}
