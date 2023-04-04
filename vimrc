@@ -25,7 +25,7 @@ Plugin 'scrooloose/nerdtree'
 " Easy motion
 Plugin 'easymotion/vim-easymotion'
 
-Plugin 'lukas-reineke/indent-blankline.nvim'
+Plugin 'Yggdroot/indentLine'
 
 Plugin 'christoomey/vim-tmux-navigator'
 
