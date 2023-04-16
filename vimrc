@@ -144,7 +144,7 @@ command Econfig edit $MYVIMRC
 command ReloadConfig source $MYVIMRC
 
 " fzf.vim
-nnoremap <silent> <Leader>f :Files<CR>
+nnoremap <silent> <Leader>ff :Files<CR>
 nnoremap <silent> <Leader>b :Buffers<CR>
 
 <<<dash_config>>>
