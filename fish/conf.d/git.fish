@@ -17,4 +17,3 @@ alias gf "git fetch"
 alias gfa "git fetch --all --prune"
 alias gpsup "git push -u origin (git_current_branch)"
 alias gd "git diff"
-
