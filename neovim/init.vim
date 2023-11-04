@@ -109,11 +109,11 @@ nnoremap <Leader><Space> :
 nnoremap <silent> <F4> :TagbarToggle<CR>
 
 " UltiSnip settings
-let g:UltiSnipsExpandTrigger="<tab>"
-let g:UltiSnipsJumpForwardTrigger="<c-b>"
-let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+let g:UltiSnipsExpandTrigger = "<C-s>"
+let g:UltiSnipsJumpForwardTrigger = "<C-b>"
+let g:UltiSnipsJumpBackwardTrigger = "<C-z>"
 
-let g:UltiSnipsEditSplit="vertical"
+let g:UltiSnipsEditSplit = "vertical"
 
 " Enable Emmet for eruby
 autocmd FileType eruby EmmetInstall

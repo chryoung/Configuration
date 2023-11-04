@@ -4,7 +4,6 @@ use warnings;
 use strict;
 
 use Env qw/HOME/;
-use Fcntl qw/SEEK_SET/;
 use Getopt::Long;
 
 # Global flags
@@ -70,7 +69,17 @@ DASH_CONFIG
   $init_placeholder_value{"ycm_config"} = <<'YCM_CONFIG' if $ENABLE_YCM;
 
 " YouCompleteMe
-let g:ycm_key_invoke_completion = '<C-m>'
+" Rebind sematic completion
+let g:ycm_key_invoke_completion = '<C-x>'
+let completeopt="menu,popup"
+nnoremap <leader>gtr :YcmCompleter GoToReferences<cr>
+nnoremap <leader>gd :YcmCompleter GetDoc<cr>
+nnoremap <leader>yfi :YcmCompleter FixIt<cr>
+nnoremap <leader>yfmt :YcmCompleter Format<cr>
+nnoremap <F8> :YcmCompleter GoToDefinition<cr>
+nnoremap <F9> :YcmCompleter GoToInclude<cr>
+nnoremap <F10> :YcmCompleter GoToAlternateFile<cr>
+nnoremap <F12> :YcmCompleter GoTo<cr>
 YCM_CONFIG
 
   fill_template("$neovim_config_home/init.vim", "neovim/init.vim", \%init_placeholder_value);
