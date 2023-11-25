@@ -78,11 +78,6 @@ return packer.startup(function()
 
   -- Snippet
   use { 'SirVer/ultisnips', event = 'VimEnter' }
-  use {
-    'honza/vim-snippets',
-    requires = { 'SirVer/ultisnips' },
-    event = 'VimEnter'
-  }
 
   -- Status line
   use {
@@ -101,22 +96,6 @@ return packer.startup(function()
 
   -- Type :AsyncRun to run a command aschronously
   use { 'skywind3000/asyncrun.vim', cmd = { 'AsyncRun' } }
-
-  -- Better highlighting
-  use {
-    'nvim-treesitter/nvim-treesitter',
-    run = ':TSUpdate',
-    event = 'VimEnter',
-    config = function() require'nvim-treesitter.configs'.setup {
-      ensure_installed = { 'cpp', 'rust', 'ruby', 'python', 'lua' },
-      sync_install = false,
-      highlight = {
-        enable = true,
-        disable = { 'perl' },
-        additional_vim_regex_highlighting = false,
-      },
-    } end
-  }
 
   -- Smooth scroll
   use { 'karb94/neoscroll.nvim', config = function() require('neoscroll').setup() end }
