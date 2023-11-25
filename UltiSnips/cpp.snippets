@@ -1,0 +1,38 @@
+extends c
+
+snippet ns "namespace"
+namespace $0 {
+} // end of namespace $0
+endsnippet
+
+snippet uns "using namespace"
+using namespace $0;
+endsnippet
+
+snippet ust "Name a type with using"
+using $0 = $1;
+endsnippet
+
+snippet gt "google test"
+TEST(${1:test namespace}, ${2:test name}) {
+  ${0:test body}
+}
+endsnippet
+
+snippet gf "google test with fixture"
+TEST_F(${1:test namespace}, ${2:test name}) {
+  ${0:test body}
+}
+endsnippet
+
+snippet cls "class"
+class ${1:class name} {
+ public:
+  $1();
+	virtual ~$1();
+
+ private:
+  $0
+};
+endsnippet
+
