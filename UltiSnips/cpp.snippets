@@ -30,9 +30,9 @@ const ${1:type}& $0
 endsnippet
 
 snippet gsetter "Getter and setter"
-$1 $2() { return _$2; }
+${1:type} ${2:name}() { return _$2; }
 $1 $2() const { return _$2; }
-$3& set_$2(const $1& $2) {
+${3:self_type}& set_$2(const $1& $2) {
   _$2 = $2;
   return *this;
 }
@@ -45,23 +45,23 @@ $1 $2() const { return _$3; }
 $0
 endsnippet
 
-snippet stac "static cast" i
+snippet stac "static cast" w
 static_cast<$1>($2)$0
 endsnippet
 
-snippet dync "dynamic cast" i
+snippet dync "dynamic cast" w
 dynamic_cast<$1>($2)$0
 endsnippet
 
-snippet reic "reinterpret cast" i
+snippet reic "reinterpret cast" w
 reinterpret_cast<$1>($2)$0
 endsnippet
 
-snippet conc "const cast" i
+snippet conc "const cast" w
 const_cast<$1>($2)$0
 endsnippet
 
-snippet sharep "shared ptr" w
+snippet sharedp "shared ptr" w
 std::shared_ptr<${1:type}>$0
 endsnippet
 
