@@ -1,7 +1,26 @@
+global !p
+import uuid
+
+def cpp_header_uuid():
+	guid = str(uuid.uuid4()).replace('-', '_')
+	if ord('0') <= ord(guid[0]) <= ord('9'):
+			guid = random.choice(['a', 'b', 'c', 'd', 'e', 'f']) + guid[1:-1]
+	return guid.upper()
+endglobal
+
 snippet inc "#include"
 #include "$0"
 endsnippet
 
 snippet ing "#include <>"
 #include <$0>
+endsnippet
+
+snippet hd "define header"
+#ifndef ${1:`!p if not snip.c: snip.rv = cpp_header_uuid()`}
+#define $1
+
+$0
+
+#endif
 endsnippet
