@@ -1,32 +1,21 @@
 extends c
 
 snippet ns "namespace"
-namespace $0 {
-} // end of namespace $0
+namespace $1 {
+$0
+} // end of namespace $1
 endsnippet
 
 snippet uns "using namespace"
-using namespace $0;
+using namespace $1;
 endsnippet
 
 snippet ust "Name a type with using"
-using $0 = $1;
-endsnippet
-
-snippet gt "google test"
-TEST(${1:test namespace}, ${2:test name}) {
-  ${0:test body}
-}
-endsnippet
-
-snippet gf "google test with fixture"
-TEST_F(${1:test namespace}, ${2:test name}) {
-  ${0:test body}
-}
+using $1 = $2;
 endsnippet
 
 snippet cls "class"
-class ${1:class name} {
+class ${1:name} {
  public:
   $1();
 	virtual ~$1();
@@ -36,3 +25,80 @@ class ${1:class name} {
 };
 endsnippet
 
+snippet cref "const reference" i
+const ${1:type}& $0
+endsnippet
+
+snippet gsetter "Getter and setter"
+$1 $2() { return _$2; }
+$1 $2() const { return _$2; }
+$3& set_$2(const $1& $2) {
+  _$2 = $2;
+  return *this;
+}
+$0
+endsnippet
+
+snippet getter "Getter"
+${1:type} ${2:name}() { return _${3:member}; }
+$1 $2() const { return _$3; }
+$0
+endsnippet
+
+snippet stac "static cast" i
+static_cast<$1>($2)$0
+endsnippet
+
+snippet dync "dynamic cast" i
+dynamic_cast<$1>($2)$0
+endsnippet
+
+snippet reic "reinterpret cast" i
+reinterpret_cast<$1>($2)$0
+endsnippet
+
+snippet conc "const cast" i
+const_cast<$1>($2)$0
+endsnippet
+
+snippet sharep "shared ptr" w
+std::shared_ptr<${1:type}>$0
+endsnippet
+
+snippet mksharedp "make shared ptr" w
+std::make_shared<${1:type}>($2)$0
+endsnippet
+
+snippet uniqp "unique ptr" w
+std::unique_ptr<${1:type}>$0
+endsnippet
+
+snippet mkuniqp "make unique ptr" w
+std::make_unique<${1:type}>($2)$0
+endsnippet
+
+snippet inst "Create class instance" b
+$1 $2{$3};
+$0
+endsnippet
+
+# Google test
+snippet gttst "google test"
+TEST(${1:namespace}, ${2:name}) {
+  $0
+}
+endsnippet
+
+snippet gtfix "google test with fixture"
+TEST_F(${1:fixture}, ${2:name}) {
+  $0
+}
+endsnippet
+
+snippet gtae "google test assert equal"
+ASSERT_EQ(${1:expected}, ${2:actual});
+endsnippet
+
+snippet gtee "google test expect equal"
+EXPECT_EQ(${1:expected}, ${2:actual});
+endsnippet
