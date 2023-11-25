@@ -110,8 +110,8 @@ nnoremap <silent> <F4> :TagbarToggle<CR>
 
 " UltiSnip settings
 let g:UltiSnipsExpandTrigger = "<C-s>"
-let g:UltiSnipsJumpForwardTrigger = "<C-b>"
-let g:UltiSnipsJumpBackwardTrigger = "<C-z>"
+let g:UltiSnipsJumpForwardTrigger = "<C-.>"
+let g:UltiSnipsJumpBackwardTrigger = "<C-,>"
 
 let g:UltiSnipsEditSplit = "vertical"
 
