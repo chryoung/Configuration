@@ -117,8 +117,5 @@ nnoremap <silent> <C-l> :TmuxNavigateRight<cr>
 set wildignore+=*/node_modules/**
 set wildignore+=*/venv/**
 
-" Lualine init
-lua require'lualine'.setup()
-
 " NerdTree shortcuts
 nnoremap <silent> <F2> :NERDTreeToggle<CR>
