@@ -75,8 +75,8 @@ endfunction
 nnoremap <silent> <C-q> :call ToggleQuickFix()<CR>
 
 " Jump between quickfix items
-nnoremap <silent> <Leader>fj :cnext<CR>
-nnoremap <silent> <Leader>fk :cprev<CR>
+nnoremap <silent> <Leader>hj :cnext<CR>
+nnoremap <silent> <Leader>hk :cprev<CR>
 
 " Configuration commands
 command Econfig edit $MYVIMRC

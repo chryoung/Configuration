@@ -91,8 +91,8 @@ endfunction
 nnoremap <silent> <C-q> :call ToggleQuickFix()<CR>
 
 " Jump between quickfix items
-nnoremap <silent> <Leader>fj :cnext<CR>
-nnoremap <silent> <Leader>fk :cprev<CR>
+nnoremap <silent> <Leader>hj :cnext<CR>
+nnoremap <silent> <Leader>hk :cprev<CR>
 
 " Redraw screen and turn off the current highlight search
 nnoremap <silent> <Leader>l :nohl<CR><C-L>
@@ -126,10 +126,10 @@ nnoremap <silent> <C-h> :TmuxNavigateLeft<cr>
 nnoremap <silent> <C-l> :TmuxNavigateRight<cr>
 
 " telescope
-nnoremap <leader>ff <cmd>lua require('telescope.builtin').find_files()<cr>
-nnoremap <leader>g <cmd>lua require('telescope.builtin').live_grep()<cr>
-nnoremap <leader>b <cmd>lua require('telescope.builtin').buffers()<cr>
-nnoremap <leader>h <cmd>lua require('telescope.builtin').help_tags()<cr>
+nnoremap <Leader>ff <cmd>lua require('telescope.builtin').find_files()<cr>
+nnoremap <Leader>fg <cmd>lua require('telescope.builtin').live_grep()<cr>
+nnoremap <Leader>fb <cmd>lua require('telescope.builtin').buffers()<cr>
+nnoremap <Leader>fh <cmd>lua require('telescope.builtin').help_tags()<cr>
 <<<dash_config>>>
 
 " Disable Markdown fold

@@ -108,8 +108,8 @@ endfunction
 nnoremap <silent> <C-q> :call ToggleQuickFix()<CR>
 
 " Jump between quickfix items
-nnoremap <silent> <Leader>fj :cnext<CR>
-nnoremap <silent> <Leader>fk :cprev<CR>
+nnoremap <silent> <Leader>hj :cnext<CR>
+nnoremap <silent> <Leader>hk :cprev<CR>
 
 " NerdTree shortcuts
 nnoremap <silent> <F2> :NERDTreeToggle<CR>
@@ -145,6 +145,6 @@ command ReloadConfig source $MYVIMRC
 
 " fzf.vim
 nnoremap <silent> <Leader>ff :Files<CR>
-nnoremap <silent> <Leader>b :Buffers<CR>
+nnoremap <silent> <Leader>fb :Buffers<CR>
 
 <<<dash_config>>>
