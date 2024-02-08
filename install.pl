@@ -63,20 +63,13 @@ sub install_neovim {
   my $packer_vim = "${HOME}/.local/share/nvim/site/pack/packer/start/packer.nvim";
   `git clone --depth=1 https://github.com/wbthomason/packer.nvim $packer_vim` unless -e $packer_vim;
 
-  # Compose init.vim
   my %enabled_configs;
-  # Configure Dash
+
+  # Enable configurations
   $enabled_configs{"dash"} = 1 if $ENABLE_DASH;
-
-  # Configure ycm plugin
   $enabled_configs{"ycm"} = 1 if $ENABLE_YCM;
-
-  fill_template("$neovim_config_home/init.vim", "nvim/neovim/init.vim", \%enabled_configs, "\"");
-
-  # Compose config.lua
-  # Configure Dash plugin for telescope
-  # Configure LSP
   if ($ENABLE_LSP) {
+    $enabled_configs{"lsp"} = 1;
     print "Enable PLS LSP for Perl on neovim? [y/N]: \n";
     chomp(my $enable_pls = <STDIN>);
     if ($enable_pls eq "y") {
@@ -90,22 +83,17 @@ sub install_neovim {
       $enabled_configs{"lsp_python"} = 1;
     }
   }
-
-  fill_template("$neovim_config_home/lua/config.lua", "nvim/neovim/lua/config.lua", \%enabled_configs, "--");
-
-  # Compose plugins.lua
   # Install impatient plugin if Dash is not installed
   # impatient plugin and Dash plugin have conflicts
   # Dash cannot require libdash_nvim if impatient is installed
   # and the require command is hooked
   $enabled_configs{"impatient"} = 1 unless $ENABLE_DASH;
 
-  # Install LSP plugin
-  $enabled_configs{"lsp"} = 1 if $ENABLE_LSP;
-
-  # Install ycm plugin
-  $enabled_configs{"ycm"} = 1 if $ENABLE_YCM;
-
+  # Compose init.vim
+  fill_template("$neovim_config_home/init.vim", "nvim/neovim/init.vim", \%enabled_configs, "\"");
+  # Compose config.lua
+  fill_template("$neovim_config_home/lua/config.lua", "nvim/neovim/lua/config.lua", \%enabled_configs, "--");
+  # Compose plugins.lua
   fill_template("$neovim_config_home/lua/plugins.lua", "nvim/neovim/lua/plugins.lua", \%enabled_configs, "--");
 
   # Install ftplugin
@@ -119,12 +107,12 @@ sub install_vim {
   # Install Vundle
   `git clone --depth=1 https://github.com/VundleVim/Vundle.vim.git ${HOME}/.vim/bundle/Vundle.vim` unless -d "${HOME}/.vim/bundle/Vundle.vim";
 
-  # Compose .vimrc
   my %enabled_configs;
 
   # Install Dash plugin
   $enabled_configs{"dash"} = 1 if $ENABLE_DASH;
 
+  # Compose .vimrc
   fill_template("${HOME}/.vimrc", "vim/vimrc", \%enabled_configs, "\"");
 
   # Install ftplugin
