@@ -82,7 +82,7 @@ nnoremap <F10> :YcmCompleter GoToAlternateFile<cr>
 nnoremap <F12> :YcmCompleter GoTo<cr>
 YCM_CONFIG
 
-  fill_template("$neovim_config_home/init.vim", "neovim/init.vim", \%init_placeholder_value);
+  fill_template("$neovim_config_home/init.vim", "nvim/neovim/init.vim", \%init_placeholder_value);
 
   # Compose config.lua
   # Configure Dash plugin for telescope
@@ -118,7 +118,7 @@ DASH_CONFIG_LUA
     }
   }
 
-  fill_template("$neovim_config_home/lua/config.lua", "neovim/lua/config.lua", \%config_lua_placeholder_value);
+  fill_template("$neovim_config_home/lua/config.lua", "nvim/neovim/lua/config.lua", \%config_lua_placeholder_value);
 
   # Compose plugins.lua
   my %plugin_placeholder_value;
@@ -161,11 +161,11 @@ LSP_PLUGIN
   }
 YCM_PLUGIN
 
-  fill_template("$neovim_config_home/lua/plugins.lua", "neovim/lua/plugins.lua", \%plugin_placeholder_value);
+  fill_template("$neovim_config_home/lua/plugins.lua", "nvim/neovim/lua/plugins.lua", \%plugin_placeholder_value);
 
   # Install ftplugin
   mkdir_unless_exists("$neovim_config_home/ftplugin");
-  `cp ftplugin/*.vim $neovim_config_home/ftplugin`;
+  `cp vim_common/ftplugin/*.vim $neovim_config_home/ftplugin`;
 
   print "Start nvim and run :PackerSync manually\n";
 }
@@ -189,11 +189,11 @@ VIMRC_DASH_PLUGIN
 nnoremap <silent> <Leader>dw :Dash<CR>
 VIMRC_DASH_CONFIG
 
-  fill_template("${HOME}/.vimrc", "vimrc", \%vimrc_placeholder_value);
+  fill_template("${HOME}/.vimrc", "vim/vimrc", \%vimrc_placeholder_value);
 
   # Install ftplugin
   mkdir_unless_exists("${HOME}/.vim/ftplugin");
-  `cp ftplugin/*.vim ${HOME}/.vim/ftplugin`;
+  `cp vim_common/ftplugin/*.vim ${HOME}/.vim/ftplugin`;
 
   print "Start vim and run :PluginInstall manually\n";
 }
@@ -202,7 +202,7 @@ sub install_tmux {
   my $linux_powerline = "/usr/share/powerline/bindings/tmux/powerline.conf";
   my %tmux_placeholder_value;
 
-  if ($^O eq "linux") {
+  if ($^O eq "linux" and -e "/usr/bin/apt-get") {
     unless (-e $linux_powerline) {
       print "Installing Powerline...\n";
       `sudo apt-get -y install powerline` 
@@ -238,7 +238,7 @@ set -g status-right '#[fg=green][#[fg=cyan]%Y-%m-%d#[fg=green]]'
 TMUX_CUSTOMIZED_THEME
   }
 
-  fill_template("${HOME}/.tmux.conf", "tmux.conf", \%tmux_placeholder_value);
+  fill_template("${HOME}/.tmux.conf", "tmux/tmux.conf", \%tmux_placeholder_value);
 }
 
 sub install_fish {
