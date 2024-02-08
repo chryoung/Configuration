@@ -33,7 +33,10 @@ Plugin 'christoomey/vim-tmux-navigator'
 Plugin 'junegunn/fzf'
 
 Plugin 'junegunn/fzf.vim'
-<<<dash_plugin>>>
+"<<<dash>>>
+
+Plugin 'rizzatti/dash.vim'
+"<<</dash>>>
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -147,4 +150,8 @@ command ReloadConfig source $MYVIMRC
 nnoremap <silent> <Leader>ff :Files<CR>
 nnoremap <silent> <Leader>fb :Buffers<CR>
 
-<<<dash_config>>>
+"<<<dash>>>
+" Dash
+nnoremap <silent> <Leader>dw :Dash<CR>
+
+"<<</dash>>>

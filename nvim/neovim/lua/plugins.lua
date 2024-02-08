@@ -12,7 +12,14 @@ packer.init({
 })
 
 return packer.startup(function()
-<<<impatient_plugin>>>
+--<<<impatient>>>
+  -- Speed up NeoVim startup
+  use {
+    'lewis6991/impatient.nvim',
+    config = [[require('impatient')]]
+  }
+
+--<<</impatient>>>
   -- Packer can manage itself
   use 'wbthomason/packer.nvim'
 
@@ -97,9 +104,6 @@ return packer.startup(function()
   -- Type :AsyncRun to run a command aschronously
   use { 'skywind3000/asyncrun.vim', cmd = { 'AsyncRun' } }
 
-  -- Smooth scroll
-  use { 'karb94/neoscroll.nvim', config = function() require('neoscroll').setup() end }
-
   use { 'simnalamburt/vim-mundo', cmd = { 'MundoToggle', 'MundoShow' }}
 
   use {
@@ -118,16 +122,6 @@ return packer.startup(function()
     config = function ()
         require'alpha'.setup(require'alpha.themes.startify'.config)
     end
-  }
-
-  use {
-    'tpope/vim-rails',
-    ft = { 'ruby', 'eruby' }
-  }
-
-  use {
-    'rust-lang/rust.vim',
-    ft = { 'rust' }
   }
 
   use {
@@ -157,8 +151,30 @@ return packer.startup(function()
     requires = { { 'nvim-lua/plenary.nvim' } },
     Event = 'VimEnter'
   }
-<<<lsp_plugin>>>
-<<<ycm_plugin>>>
-<<<dash_plugin>>>
+
+  use {
+    'tpope/vim-rails',
+    ft = { 'ruby', 'eruby' }
+  }
+--<<<lsp_plugin>>>
+
+  use { 'neovim/nvim-lspconfig' }
+--<<</lsp_plugin>>>
+--<<<ycm_plugin>>>
+
+  use {
+    'ycm-core/YouCompleteMe',
+    ft = { 'python', 'python3', 'c', 'cpp', 'rust' },
+    cmd = 'python3 install.py --clangd-completer --rust-completer'
+  }
+--<<</ycm_plugin>>>
+--<<<dash_config>>>
+
+  use {
+    'mrjones2014/dash.nvim',
+    run = 'make install',
+    Event = 'VimEnter'
+  }
+--<<</dash_config>>>
 
 end)

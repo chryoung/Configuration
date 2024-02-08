@@ -130,7 +130,12 @@ nnoremap <Leader>ff <cmd>lua require('telescope.builtin').find_files()<cr>
 nnoremap <Leader>fg <cmd>lua require('telescope.builtin').live_grep()<cr>
 nnoremap <Leader>fb <cmd>lua require('telescope.builtin').buffers()<cr>
 nnoremap <Leader>fh <cmd>lua require('telescope.builtin').help_tags()<cr>
-<<<dash_config>>>
+"<<<dash>>>
+
+" Dash
+nnoremap <Leader>dq :Dash<CR>
+nnoremap <Leader>dw :DashWord<CR>
+"<<</dash>>>
 
 " Disable Markdown fold
 let g:vim_markdown_folding_disabled = 1
@@ -138,5 +143,18 @@ let g:vim_markdown_folding_disabled = 1
 " Ignore folder for vimgrep
 set wildignore+=*/node_modules/**
 set wildignore+=*/venv/**
-<<<ycm_config>>>
+"<<<ycm>>>
 
+" YouCompleteMe
+" Rebind sematic completion
+let g:ycm_key_invoke_completion = '<C-x>'
+let completeopt="menu,popup"
+nnoremap <leader>gtr :YcmCompleter GoToReferences<cr>
+nnoremap <leader>gd :YcmCompleter GetDoc<cr>
+nnoremap <leader>yfi :YcmCompleter FixIt<cr>
+nnoremap <leader>yfmt :YcmCompleter Format<cr>
+nnoremap <F8> :YcmCompleter GoToDefinition<cr>
+nnoremap <F9> :YcmCompleter GoToInclude<cr>
+nnoremap <F10> :YcmCompleter GoToAlternateFile<cr>
+nnoremap <F12> :YcmCompleter GoTo<cr>
+"<<</ycm>>>

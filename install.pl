@@ -16,22 +16,30 @@ my $SHOW_HELP;
 sub fill_template {
   my $dest = shift;
   my $template = shift;
-  my $placeholder_value = shift // {};
+  my $enabled_configs = shift // {};
+  my $comment = shift // "#";
 
   open my $dest_fh, ">", $dest
     or return 0;
   open my $template_fh, "<", $template
     or return 0;
 
+  my $current_config;
+  my $will_print_current_config = 0;
   while (<$template_fh>) {
-    # If the line is a placeholder: <<<placerholder>>>
-    if (/^<<<([^>]+)>>>$/) {
-      my $placeholder = $1;
-      if (exists $placeholder_value->{$placeholder}) {
-        print $dest_fh $placeholder_value->{$placeholder};
+    # If the line indicates the start of the config <<<config_name>>>
+    if (/^${comment}<<<([^>]+)>>>$/) {
+      my $current_config = $1;
+      if (exists $enabled_configs->{$current_config}) {
+        $will_print_current_config = 1;
       }
-    } else {
+    } elsif (($current_config and $will_print_current_config)
+             or not $current_config) {
       print $dest_fh $_;
+    # If the line indicates the end of the config <<</config_name>>>
+    } elsif ($current_config and m!^${comment}<<</${current_config}>>>$!) {
+      $current_config = "";
+      $will_print_current_config = 0;
     }
   }
 
@@ -56,112 +64,49 @@ sub install_neovim {
   `git clone --depth=1 https://github.com/wbthomason/packer.nvim $packer_vim` unless -e $packer_vim;
 
   # Compose init.vim
-  my %init_placeholder_value;
+  my %enabled_configs;
   # Configure Dash
-  $init_placeholder_value{"dash_config"} = <<'DASH_CONFIG' if $ENABLE_DASH;
-
-" Dash
-nnoremap <Leader>dq :Dash<CR>
-nnoremap <Leader>dw :DashWord<CR>
-DASH_CONFIG
+  $enabled_configs{"dash"} = 1 if $ENABLE_DASH;
 
   # Configure ycm plugin
-  $init_placeholder_value{"ycm_config"} = <<'YCM_CONFIG' if $ENABLE_YCM;
+  $enabled_configs{"ycm"} = 1 if $ENABLE_YCM;
 
-" YouCompleteMe
-" Rebind sematic completion
-let g:ycm_key_invoke_completion = '<C-x>'
-let completeopt="menu,popup"
-nnoremap <leader>gtr :YcmCompleter GoToReferences<cr>
-nnoremap <leader>gd :YcmCompleter GetDoc<cr>
-nnoremap <leader>yfi :YcmCompleter FixIt<cr>
-nnoremap <leader>yfmt :YcmCompleter Format<cr>
-nnoremap <F8> :YcmCompleter GoToDefinition<cr>
-nnoremap <F9> :YcmCompleter GoToInclude<cr>
-nnoremap <F10> :YcmCompleter GoToAlternateFile<cr>
-nnoremap <F12> :YcmCompleter GoTo<cr>
-YCM_CONFIG
-
-  fill_template("$neovim_config_home/init.vim", "nvim/neovim/init.vim", \%init_placeholder_value);
+  fill_template("$neovim_config_home/init.vim", "nvim/neovim/init.vim", \%enabled_configs, "\"");
 
   # Compose config.lua
   # Configure Dash plugin for telescope
-  my %config_lua_placeholder_value;
-  $config_lua_placeholder_value{"dash_config"} = <<'DASH_CONFIG_LUA' if $ENABLE_DASH;
-telescope.setup({
-  extensions = {
-    dash = {
-      search_engine = 'google',
-      file_type_keywords = {
-        ruby = { 'ruby', 'rails' },
-        cmake = { 'cmake' },
-        python = { 'python3', 'python' },
-      }
-    }
-  }
-})
-DASH_CONFIG_LUA
-
   # Configure LSP
   if ($ENABLE_LSP) {
     print "Enable PLS LSP for Perl on neovim? [y/N]: \n";
     chomp(my $enable_pls = <STDIN>);
     if ($enable_pls eq "y") {
-      $config_lua_placeholder_value{"lsp_config"} .= "require'lspconfig'.perlpls.setup{}\n";
+      $enabled_configs{"lsp_perl"} = 1;
       print "Enabled. Please remember to run `sudo cpan install -f PLS` after setup.\n";
     }
 
     print "Enable Pyright LSP for Python on neovim? [y/N]: \n";
     chomp(my $enable_pyright = <STDIN>);
     if ($enable_pyright eq "y") {
-      $config_lua_placeholder_value{"lsp_config"} .= "require'lspconfig'.pyright.setup{}\n";
+      $enabled_configs{"lsp_python"} = 1;
     }
   }
 
-  fill_template("$neovim_config_home/lua/config.lua", "nvim/neovim/lua/config.lua", \%config_lua_placeholder_value);
+  fill_template("$neovim_config_home/lua/config.lua", "nvim/neovim/lua/config.lua", \%enabled_configs, "--");
 
   # Compose plugins.lua
-  my %plugin_placeholder_value;
-  # Install Dash plugin
-  $plugin_placeholder_value{"dash_plugin"} = <<'DASH_PLUGIN' if $ENABLE_DASH;
-
-  use {
-    'mrjones2014/dash.nvim',
-    run = 'make install',
-    Event = 'VimEnter'
-  }
-DASH_PLUGIN
-
   # Install impatient plugin if Dash is not installed
   # impatient plugin and Dash plugin have conflicts
   # Dash cannot require libdash_nvim if impatient is installed
   # and the require command is hooked
-  $plugin_placeholder_value{"impatient_plugin"} = <<'IMPATIENT_PLUGIN' unless $ENABLE_DASH;
-  -- Speed up NeoVim startup
-  use {
-    'lewis6991/impatient.nvim',
-    config = [[require('impatient')]]
-  }
-
-IMPATIENT_PLUGIN
+  $enabled_configs{"impatient"} = 1 unless $ENABLE_DASH;
 
   # Install LSP plugin
-  $plugin_placeholder_value{"lsp_plugin"} = <<'LSP_PLUGIN' if $ENABLE_LSP;
-
-  use { 'neovim/nvim-lspconfig' }
-LSP_PLUGIN
+  $enabled_configs{"lsp"} = 1 if $ENABLE_LSP;
 
   # Install ycm plugin
-  $plugin_placeholder_value{"ycm_plugin"} = <<'YCM_PLUGIN' if $ENABLE_YCM;
+  $enabled_configs{"ycm"} = 1 if $ENABLE_YCM;
 
-  use {
-    'ycm-core/YouCompleteMe',
-    ft = { 'python', 'python3', 'c', 'cpp', 'rust' },
-    cmd = 'python3 install.py --clangd-completer --rust-completer'
-  }
-YCM_PLUGIN
-
-  fill_template("$neovim_config_home/lua/plugins.lua", "nvim/neovim/lua/plugins.lua", \%plugin_placeholder_value);
+  fill_template("$neovim_config_home/lua/plugins.lua", "nvim/neovim/lua/plugins.lua", \%enabled_configs, "--");
 
   # Install ftplugin
   mkdir_unless_exists("$neovim_config_home/ftplugin");
@@ -175,21 +120,12 @@ sub install_vim {
   `git clone --depth=1 https://github.com/VundleVim/Vundle.vim.git ${HOME}/.vim/bundle/Vundle.vim` unless -d "${HOME}/.vim/bundle/Vundle.vim";
 
   # Compose .vimrc
-  my %vimrc_placeholder_value;
+  my %enabled_configs;
 
   # Install Dash plugin
-  $vimrc_placeholder_value{"dash_plugin"} = <<'VIMRC_DASH_PLUGIN' if $ENABLE_DASH;
+  $enabled_configs{"dash"} = 1 if $ENABLE_DASH;
 
-Plugin 'rizzatti/dash.vim'
-VIMRC_DASH_PLUGIN
-
-  $vimrc_placeholder_value{"dash_config"} = <<'VIMRC_DASH_CONFIG' if $ENABLE_DASH;
-
-" Dash
-nnoremap <silent> <Leader>dw :Dash<CR>
-VIMRC_DASH_CONFIG
-
-  fill_template("${HOME}/.vimrc", "vim/vimrc", \%vimrc_placeholder_value);
+  fill_template("${HOME}/.vimrc", "vim/vimrc", \%enabled_configs, "\"");
 
   # Install ftplugin
   mkdir_unless_exists("${HOME}/.vim/ftplugin");
@@ -200,7 +136,7 @@ VIMRC_DASH_CONFIG
 
 sub install_tmux {
   my $linux_powerline = "/usr/share/powerline/bindings/tmux/powerline.conf";
-  my %tmux_placeholder_value;
+  my %enabled_configs;
 
   if ($^O eq "linux" and -e "/usr/bin/apt-get") {
     unless (-e $linux_powerline) {
@@ -209,36 +145,13 @@ sub install_tmux {
     }
 
     print "Use Powerline for tmux theme\n";
-    $tmux_placeholder_value{"theme"} = <<"TMUX_POWERLINE";
-run-shell "powerline-daemon -q"
-source $linux_powerline
-TMUX_POWERLINE
+    $enabled_configs{"powerline"} = 1;
   } else {
     print "Use customized tmux theme\n";
-    $tmux_placeholder_value{"theme"} = <<'TMUX_CUSTOMIZED_THEME';
-# Status bar
-# colors
-set -g status-bg black
-set -g status-fg white
-
-# alignment
-set-option -g status-justify centre
-
-# spot at left
-set-option -g status-left '#[bg=black,fg=green][#[fg=cyan]#S#[fg=green]]'
-set-option -g status-left-length 20
-
-# window list
-setw -g automatic-rename on
-set-window-option -g window-status-format '#[dim]#I:#[default]#W#[fg=grey,dim]'
-set-window-option -g window-status-current-format '#[fg=cyan,bold]#I#[fg=blue]:#[fg=cyan]#W#[fg=dim]'
-
-# spot at right
-set -g status-right '#[fg=green][#[fg=cyan]%Y-%m-%d#[fg=green]]'
-TMUX_CUSTOMIZED_THEME
+    $enabled_configs{"simpletheme"} = 1;
   }
 
-  fill_template("${HOME}/.tmux.conf", "tmux/tmux.conf", \%tmux_placeholder_value);
+  fill_template("${HOME}/.tmux.conf", "tmux/tmux.conf", \%enabled_configs);
 }
 
 sub install_fish {
@@ -277,17 +190,10 @@ if ($SHOW_HELP) {
     print "    --all install all targets\n";
     print "    --h show this help\n";
 } elsif ($INSTALL_ALL) {
-  install_neovim;
-  print "Finish install neovim\n";
-
-  install_vim;
-  print "Finish install vim\n";
-
-  install_tmux;
-  print "Finish install tmux\n";
-
-  install_fish;
-  print "Finish install fish\n";
+  while (my ($target, $installer) = each %all_targets) {
+    &{$installer};
+    print "Finish installing $target\n";
+  }
 
   print "Finish installing all\n";
 } else {
