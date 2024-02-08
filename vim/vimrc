@@ -91,14 +91,6 @@ inoremap ] ]<C-g>u
 nnoremap <expr> k (v:count > 5 ? "m'" . v:count : "") . 'k'
 nnoremap <expr> j (v:count > 5 ? "m'" . v:count : "") . 'j'
 
-" Move lines around
-vnoremap J :m '>+1<CR>gv=gv
-vnoremap K :m '<-2<CR>gv=gv
-inoremap <C-j> <ESC>:m .+1<CR>==
-inoremap <C-k> <ESC>:m .-2<CR>==
-nnoremap <Leader>mj :m .+1<CR>==
-nnoremap <Leader>mk :m .-2<CR>==
-
 " Toggle quickfix window
 function! ToggleQuickFix()
   if empty(filter(getwininfo(), 'v:val.quickfix'))
@@ -111,8 +103,8 @@ endfunction
 nnoremap <silent> <C-q> :call ToggleQuickFix()<CR>
 
 " Jump between quickfix items
-nnoremap <silent> <Leader>hj :cnext<CR>
-nnoremap <silent> <Leader>hk :cprev<CR>
+nnoremap <silent> <Leader>fj :cnext<CR>
+nnoremap <silent> <Leader>fk :cprev<CR>
 
 " NerdTree shortcuts
 nnoremap <silent> <F2> :NERDTreeToggle<CR>
@@ -127,9 +119,6 @@ nnoremap <silent> <Leader>w :w<CR>
 
 " Colon map
 nnoremap <Leader><Space> :
-
-" Redraw screen and turn off the current highlight search
-nnoremap <silent> <C-L> :nohl<CR><C-L>
 
 map <Leader>jc <Plug>(easymotion-bd-f)
 map <Leader>jl <Plug>(easymotion-bd-jk)

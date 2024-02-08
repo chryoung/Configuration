@@ -49,6 +49,21 @@ sub fill_template {
   return 1;
 }
 
+sub ask_for {
+  my $question = shift;
+  my $confirm = shift;
+  my $dict = shift;
+  my $key = shift;
+  my $confirm_message = shift // "";
+
+    print $question;
+    chomp(my $user_input = <STDIN>);
+    if ($user_input eq $confirm) {
+      $dict->{$key} = 1;
+      print $confirm_message if $confirm_message;
+    }
+}
+
 sub mkdir_unless_exists {
   `mkdir -p $_[0]` unless -d $_[0];
 }
@@ -70,17 +85,34 @@ sub install_neovim {
   $enabled_configs{"ycm"} = 1 if $ENABLE_YCM;
   if ($ENABLE_LSP) {
     $enabled_configs{"lsp"} = 1;
-    print "Enable PLS LSP for Perl on neovim? [y/N]: \n";
-    chomp(my $enable_pls = <STDIN>);
-    if ($enable_pls eq "y") {
-      $enabled_configs{"lsp_perl"} = 1;
-      print "Enabled. Please remember to run `sudo cpan install -f PLS` after setup.\n";
-    }
-
-    print "Enable Pyright LSP for Python on neovim? [y/N]: \n";
-    chomp(my $enable_pyright = <STDIN>);
-    if ($enable_pyright eq "y") {
-      $enabled_configs{"lsp_python"} = 1;
+    my %lsp_config = (
+      "lsp_perl" => {
+        "lsp" => "PLS",
+        "language" => "Perl",
+        "message" => "Enabled. Please remember to run `sudo cpan install -f PLS` after setup.\n",
+      },
+      "lsp_pyright" => {
+        "lsp" => "pyright",
+        "language" => "Python",
+        "message" => "Enabled. Please remember to run `pip install pyright` after setup.\n",
+      },
+      "lsp_pyright" => {
+        "lsp" => "rust_analyzer",
+        "language" => "Rust",
+      },
+      "lsp_pyright" => {
+        "lsp" => "clangd",
+        "language" => "C/C++",
+      },
+    );
+    while (my ($lsp_config_key, $lsp_config_value) = each %lsp_config) {
+      ask_for(
+        sprintf("Enable %s LSP for %s on neovim? [y/N]: \n", $lsp_config_value->{"lsp"}, $lsp_config_value->{"language"}),
+        "y",
+        \%enabled_configs,
+        $lsp_config_key,
+        $lsp_config_value->{"message"}
+      );
     }
   }
   # Install impatient plugin if Dash is not installed
@@ -190,4 +222,3 @@ if ($SHOW_HELP) {
     print "Finish installing $target\n";
   }
 }
-

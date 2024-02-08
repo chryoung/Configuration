@@ -31,9 +31,6 @@ nnoremap <silent> <F3> :MundoToggle<CR>
 " Neo tree shortcut
 nnoremap <silent> <F2> :NvimTreeToggle<CR>
 
-" Use pop-up window for LeaderF
-let g:Lf_WindowPosition='popup'
-
 " hop key bindings
 nnoremap <silent> <Leader>jw :HopWord<CR>
 nnoremap <silent> <Leader>jc :HopChar1<CR>
@@ -71,14 +68,6 @@ inoremap ] ]<C-g>u
 nnoremap <expr> k (v:count > 5 ? "m'" . v:count : "") . 'k'
 nnoremap <expr> j (v:count > 5 ? "m'" . v:count : "") . 'j'
 
-" Move lines around
-vnoremap J :m '>+1<CR>gv=gv
-vnoremap K :m '<-2<CR>gv=gv
-inoremap <C-j> <ESC>:m .+1<CR>==
-inoremap <C-k> <ESC>:m .-2<CR>==
-nnoremap <Leader>mj :m .+1<CR>==
-nnoremap <Leader>mk :m .-2<CR>==
-
 " Toggle quickfix window
 function! ToggleQuickFix()
   if empty(filter(getwininfo(), 'v:val.quickfix'))
@@ -91,8 +80,8 @@ endfunction
 nnoremap <silent> <C-q> :call ToggleQuickFix()<CR>
 
 " Jump between quickfix items
-nnoremap <silent> <Leader>hj :cnext<CR>
-nnoremap <silent> <Leader>hk :cprev<CR>
+nnoremap <silent> <Leader>fj :cnext<CR>
+nnoremap <silent> <Leader>fk :cprev<CR>
 
 " Redraw screen and turn off the current highlight search
 nnoremap <silent> <Leader>l :nohl<CR><C-L>
@@ -107,13 +96,6 @@ nnoremap <Leader><Space> :
 
 " Toggle Tarbar
 nnoremap <silent> <F4> :TagbarToggle<CR>
-
-" UltiSnip settings
-let g:UltiSnipsExpandTrigger = "<C-s>"
-let g:UltiSnipsJumpForwardTrigger = "<C-.>"
-let g:UltiSnipsJumpBackwardTrigger = "<C-,>"
-
-let g:UltiSnipsEditSplit = "vertical"
 
 " Enable Emmet for eruby
 autocmd FileType eruby EmmetInstall

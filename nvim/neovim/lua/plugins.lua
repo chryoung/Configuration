@@ -83,8 +83,19 @@ return packer.startup(function()
     end
   }
 
+  -- Completion
+  use 'hrsh7th/cmp-buffer'
+  use 'hrsh7th/cmp-path'
+  use 'hrsh7th/cmp-cmdline'
+  use 'hrsh7th/nvim-cmp'
+  use 'saadparwaiz1/cmp_luasnip'
+
   -- Snippet
-  use { 'SirVer/ultisnips', event = 'VimEnter' }
+  use {
+    "L3MON4D3/LuaSnip",
+    tag = "v2.*",
+    run = "make install_jsregexp"
+  }
 
   -- Status line
   use {
@@ -103,6 +114,22 @@ return packer.startup(function()
 
   -- Type :AsyncRun to run a command aschronously
   use { 'skywind3000/asyncrun.vim', cmd = { 'AsyncRun' } }
+
+  -- Better highlighting
+  use {
+    'nvim-treesitter/nvim-treesitter',
+    run = ':TSUpdate',
+    event = 'VimEnter',
+    config = function() require'nvim-treesitter.configs'.setup {
+      ensure_installed = { 'cpp', 'rust', 'ruby', 'python', 'lua' },
+      sync_install = false,
+      highlight = {
+        enable = true,
+        disable = { 'perl' },
+        additional_vim_regex_highlighting = false,
+      },
+    } end
+  }
 
   use { 'simnalamburt/vim-mundo', cmd = { 'MundoToggle', 'MundoShow' }}
 
@@ -156,12 +183,20 @@ return packer.startup(function()
     'tpope/vim-rails',
     ft = { 'ruby', 'eruby' }
   }
+
+  use {
+    'rust-lang/rust.vim',
+    ft = { 'rust' }
+  }
 --<<<lsp_plugin>>>
 
+  -- LSP
   use { 'neovim/nvim-lspconfig' }
+  use 'hrsh7th/cmp-nvim-lsp'
 --<<</lsp_plugin>>>
 --<<<ycm_plugin>>>
 
+  -- YouCompleteMe
   use {
     'ycm-core/YouCompleteMe',
     ft = { 'python', 'python3', 'c', 'cpp', 'rust' },
