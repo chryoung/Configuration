@@ -24,22 +24,22 @@ sub fill_template {
   open my $template_fh, "<", $template
     or return 0;
 
-  my $current_config;
+  my $current_config = "";
   my $will_print_current_config = 0;
   while (<$template_fh>) {
-    # If the line indicates the start of the config <<<config_name>>>
-    if (/^${comment}<<<([^>]+)>>>$/) {
-      my $current_config = $1;
+    if (m!^${comment}<<<([^/>]+)>>>$!) {
+      # If the line indicates the begin of the config <<<config_name>>>
+      $current_config = $1;
       if (exists $enabled_configs->{$current_config}) {
         $will_print_current_config = 1;
       }
+    } elsif ($current_config and m!^${comment}<<</${current_config}>>>$!) {
+      # If the line indicates the end of the config <<</config_name>>>
+      $current_config = "";
+      $will_print_current_config = 0;
     } elsif (($current_config and $will_print_current_config)
              or not $current_config) {
       print $dest_fh $_;
-    # If the line indicates the end of the config <<</config_name>>>
-    } elsif ($current_config and m!^${comment}<<</${current_config}>>>$!) {
-      $current_config = "";
-      $will_print_current_config = 0;
     }
   }
 
