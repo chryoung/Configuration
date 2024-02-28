@@ -1,38 +1,44 @@
-" Plugin {{{
-call plug#begin()
+set nocompatible
+filetype plugin indent on
 
-" Appearance
-Plug 'chriskempson/base16-vim'
-Plug 'itchyny/lightline.vim'
-Plug 'maximbaz/lightline-ale'
-Plug 'Yggdroot/indentLine'
+function! PackInit() abort
+    packadd minpac
+    call minpac#init()
 
-" Browsing
-Plug 'preservim/nerdtree'
-Plug 'jlanzarotta/bufexplorer'
-Plug 'junegunn/fzf'
-Plug 'junegunn/fzf.vim'
+    " Appearance
+    call minpac#add('chriskempson/base16-vim')
+    call minpac#add('itchyny/lightline.vim')
+    call minpac#add('maximbaz/lightline-ale')
+    call minpac#add('Yggdroot/indentLine')
 
-" Movement
-Plug 'easymotion/vim-easymotion'
+    " Browsing
+    call minpac#add('preservim/nerdtree')
+    call minpac#add('jlanzarotta/bufexplorer')
+    call minpac#add('junegunn/fzf')
+    call minpac#add('junegunn/fzf.vim')
 
-" Git
-Plug 'tpope/vim-fugitive'
+    " Movement
+    call minpac#add('easymotion/vim-easymotion')
 
-" Async
-Plug 'skywind3000/asyncrun.vim'
+    " Git
+    call minpac#add('tpope/vim-fugitive')
 
-" General language support
-Plug 'dense-analysis/ale'
-Plug 'prabirshrestha/asyncomplete.vim'
+    " Async
+    call minpac#add('skywind3000/asyncrun.vim')
 
-" C-sharp support
-Plug 'OmniSharp/omnisharp-vim'
-Plug 'nickspoons/vim-sharpenup'
-Plug 'yami-beta/asyncomplete-omni.vim'
+    " General language support
+    call minpac#add('dense-analysis/ale')
+    call minpac#add('prabirshrestha/asyncomplete.vim')
 
-call plug#end()
-" }}}
+    " C-sharp support
+    call minpac#add('OmniSharp/omnisharp-vim')
+    call minpac#add('nickspoons/vim-sharpenup')
+    call minpac#add('yami-beta/asyncomplete-omni.vim')
+endfunction
+
+command! PackUpdate source $MYVIMRC | call PackInit() | call minpac#update()
+command! PackClean  source $MYVIMRC | call PackInit() | call minpac#clean()
+command! PackStatus packadd minpac | call minpac#status()
 
 " General settings {{{
 set guifont=Consolas:h11
