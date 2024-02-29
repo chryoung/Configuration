@@ -1,7 +1,8 @@
 set nocompatible
-syntax on
 filetype plugin indent on
+syntax on
 
+" Plugins {{{
 function! PackInit() abort
     packadd minpac
     call minpac#init()
@@ -41,8 +42,10 @@ command! PackUpdate source $MYVIMRC | call PackInit() | call minpac#update()
 command! PackClean  source $MYVIMRC | call PackInit() | call minpac#clean()
 command! PackStatus packadd minpac | call minpac#status()
 
+" }}}
+
 " General settings {{{
-set guifont=Consolas:h11
+set guifont=FantasqueSansMono_NFM:h11
 
 if &t_Co > 2 || has("gui_running")
   " Switch on highlighting the last used search pattern.
@@ -106,14 +109,6 @@ inoremap ] ]<C-g>u
 nnoremap <expr> k (v:count > 5 ? "m'" . v:count : "") . 'k'
 nnoremap <expr> j (v:count > 5 ? "m'" . v:count : "") . 'j'
 
-" Move lines around
-vnoremap J :m '>+1<CR>gv=gv
-vnoremap K :m '<-2<CR>gv=gv
-inoremap <C-j> <ESC>:m .+1<CR>==
-inoremap <C-k> <ESC>:m .-2<CR>==
-nnoremap <Leader>mj :m .+1<CR>==
-nnoremap <Leader>mk :m .-2<CR>==
-
 " Toggle quickfix window
 function! ToggleQuickFix()
   if empty(filter(getwininfo(), 'v:val.quickfix'))
@@ -144,8 +139,8 @@ nnoremap <silent> <Leader>w :w<CR>
 nnoremap <silent> <C-L> :nohl<CR><C-L>
 
 " Configuration commands
-command Econfig edit $MYVIMRC
-command ReloadConfig source $MYVIMRC
+command Econfig edit $HOME/_gvimrc
+command ReloadConfig source $HOME/_gvimrc
 
 " Window switching
 nnoremap <silent> <C-h> <C-w>h
@@ -161,8 +156,8 @@ map <Leader>jw <Plug>(easymotion-bd-w)
 " }}}
 
 " fzf.vim {{{
-nnoremap <silent> <Leader>f :Files<CR>
-nnoremap <silent> <Leader>b :Buffers<CR>
+nnoremap <silent> <Leader>ff :Files<CR>
+nnoremap <silent> <Leader>fb :Buffers<CR>
 " }}}
 
 " asynccomplete {{{
@@ -176,7 +171,7 @@ autocmd User asyncomplete_setup call asyncomplete#register_source(asyncomplete#s
 \ },
 \ }))
 
-let g:asyncomplete_auto_popup = 0
+let g:asyncomplete_auto_popup = 1
 let g:asyncomplete_auto_completeopt = 0
 
 function! s:check_back_space() abort
@@ -309,5 +304,5 @@ let g:lightline#ale#indicator_ok = "\uf00c "
 
 " Misc {{{
 " msbuild error format with option -nologo "-clp:ErrorsOnly;NoSummary;"
-" set errorformat=\ %#%f(%l\\\,%c):\ %m
+set errorformat=\ %#%f(%l\\\,%c):\ %m
 " }}}
