@@ -91,16 +91,16 @@ sub install_neovim {
         "language" => "Perl",
         "message" => "Enabled. Please remember to run `sudo cpan install -f PLS` after setup.\n",
       },
-      "lsp_pyright" => {
+      "lsp_python" => {
         "lsp" => "pyright",
         "language" => "Python",
         "message" => "Enabled. Please remember to run `pip install pyright` after setup.\n",
       },
-      "lsp_pyright" => {
+      "lsp_rust" => {
         "lsp" => "rust_analyzer",
         "language" => "Rust",
       },
-      "lsp_pyright" => {
+      "lsp_clangd" => {
         "lsp" => "clangd",
         "language" => "C/C++",
       },

@@ -188,13 +188,13 @@ return packer.startup(function()
     'rust-lang/rust.vim',
     ft = { 'rust' }
   }
---<<<lsp_plugin>>>
+--<<<lsp>>>
 
   -- LSP
   use { 'neovim/nvim-lspconfig' }
   use 'hrsh7th/cmp-nvim-lsp'
---<<</lsp_plugin>>>
---<<<ycm_plugin>>>
+--<<</lsp>>>
+--<<<ycm>>>
 
   -- YouCompleteMe
   use {
@@ -202,14 +202,14 @@ return packer.startup(function()
     ft = { 'python', 'python3', 'c', 'cpp', 'rust' },
     cmd = 'python3 install.py --clangd-completer --rust-completer'
   }
---<<</ycm_plugin>>>
---<<<dash_config>>>
+--<<</ycm>>>
+--<<<dash>>>
 
   use {
     'mrjones2014/dash.nvim',
     run = 'make install',
     Event = 'VimEnter'
   }
---<<</dash_config>>>
+--<<</dash>>>
 
 end)
