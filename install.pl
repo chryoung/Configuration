@@ -5,6 +5,7 @@ use strict;
 
 use Env qw/HOME/;
 use Getopt::Long;
+use File::Path qw/make_path/;
 
 # Global flags
 my $ENABLE_YCM;
@@ -179,6 +180,19 @@ sub install_fish {
   `cp -r fish/* ${HOME}/.config/fish/`;
 }
 
+sub install_asdf {
+  print "Installing asdf vm...\n";
+  `git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.14.0` unless -d "${HOME}/.asdf";
+  open my $fh, ">>", "${HOME}/.config/fish/config.fish"
+    or die "Cannot open fish configuration file";
+  print $fh "\nsource ~/.asdf/asdf.fish\n";
+  close $fh;
+  make_path("${HOME}/.config/fish/completions", mode => 0755);
+  `ln -s ~/.asdf/completions/asdf.fish ~/.config/fish/completions`
+    unless -l "${HOME}/.config/fish/completions/asdf.fish";
+}
+
+
 GetOptions(
   "ycm"  => \$ENABLE_YCM,
   "dash" => \$ENABLE_DASH,
@@ -194,6 +208,7 @@ my %all_targets = (
   "neovim" => \&install_neovim,
   "tmux"   => \&install_tmux,
   "fish"   => \&install_fish,
+  "asdf"   => \&install_asdf,
 );
 
 if ($SHOW_HELP) {
