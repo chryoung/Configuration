@@ -115,6 +115,10 @@ sub install_neovim {
         $lsp_config_value->{"message"}
       );
     }
+
+    # Copy LSP configuration
+    `mkdir -p $neovim_config_home/plugin`;
+    `cp nvim/neovim/plugin/lsp.lua $neovim_config_home/plugin/lsp.lua`;
   }
   # Install impatient plugin if Dash is not installed
   # impatient plugin and Dash plugin have conflicts
