@@ -182,6 +182,11 @@ sub install_tmux {
 sub install_fish {
   mkdir_unless_exists("${HOME}/.config/fish");
   `cp -r fish/* ${HOME}/.config/fish/`;
+  unless ($NVIM_DEFAULT_EDITOR) {
+    `rm ${HOME}/.config/fish/editor.fish`;
+    `rm ${HOME}/.config/fish/vim.fish`;
+  }
+
 }
 
 sub install_asdf {
@@ -201,6 +206,7 @@ GetOptions(
   "ycm"  => \$ENABLE_YCM,
   "dash" => \$ENABLE_DASH,
   "lsp"  => \$ENABLE_LSP,
+  "nvim" => \$NVIM_DEFAULT_EDITOR,
   "all"  => \$INSTALL_ALL,
   "h"    => \$SHOW_HELP,
 );
@@ -226,6 +232,7 @@ if ($SHOW_HELP) {
     print "    --ycm install ycm to neovim\n";
     print "    --dash install dash extension to vim and neovim\n";
     print "    --lsp enable LSP support for neovim\n";
+    print "    --nvim use nvim as default fish editor\n";
     print "    --all install all targets\n";
     print "    --h show this help\n";
 } elsif ($INSTALL_ALL) {
