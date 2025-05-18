@@ -11,6 +11,7 @@ use File::Path qw/make_path/;
 my $ENABLE_YCM;
 my $ENABLE_DASH;
 my $ENABLE_LSP;
+my $NVIM_DEFAULT_EDITOR;
 my $INSTALL_ALL;
 my $SHOW_HELP;
 
@@ -183,8 +184,8 @@ sub install_fish {
   mkdir_unless_exists("${HOME}/.config/fish");
   `cp -r fish/* ${HOME}/.config/fish/`;
   unless ($NVIM_DEFAULT_EDITOR) {
-    `rm ${HOME}/.config/fish/editor.fish`;
-    `rm ${HOME}/.config/fish/vim.fish`;
+    `rm ${HOME}/.config/fish/conf.d/editor.fish`;
+    `rm ${HOME}/.config/fish/functions/vim.fish`;
   }
 
 }
