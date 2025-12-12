@@ -1,0 +1,10 @@
+#+TITLE: Projects
+#+FILETAGS: :project:
+#+STARTUP: overview
+#+TODO: TODO(t) NEXT(n) WAITING(w) | DONE(d) CANCELLED(c)
+
+* Projects
+** Work
+** Personal
+** Learning
+

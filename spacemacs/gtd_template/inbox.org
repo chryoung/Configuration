@@ -1,0 +1,7 @@
+#+TITLE: Inbox
+#+FILETAGS: :inbox:
+#+STARTUP: overview
+
+* Inbox
+Capture quick thoughts and tasks here. Process daily into appropriate files.
+

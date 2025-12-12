@@ -1,0 +1,11 @@
+#+TITLE: Someday/Maybe
+#+FILETAGS: :someday:
+#+STARTUP: overview
+
+* Someday/Maybe
+Items to consider in the future, review monthly.
+
+** Ideas
+** Books to Read
+** Projects to Consider
+

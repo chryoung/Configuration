@@ -1,0 +1,159 @@
+#+TITLE: GTD Note System Documentation
+#+AUTHOR: GTD Master
+#+STARTUP: overview
+
+* Overview
+
+This is a plain-text GTD (Getting Things Done) system built with Emacs Org-mode.
+It uses a minimal file structure to avoid creating thousands of files while
+maintaining easy navigation and powerful features.
+
+* Directory Structure
+
+#+BEGIN_EXAMPLE
+~/org/
+├── inbox.org           # Quick capture, unsorted items
+├── projects.org        # Active projects with tasks
+├── someday.org         # Someday/maybe items
+├── archive.org         # Completed items archive
+├── journal/
+│   ├── 2025.org        # One file per year
+│   ├── 2026.org        # (daily entries as headings)
+│   └── ...
+└── review/
+    ├── weekly.org      # Weekly reviews
+    └── monthly.org     # Monthly retrospectives
+#+END_EXAMPLE
+
+* Journal Structure
+
+Each year has ONE file. Days are organized hierarchically:
+
+#+BEGIN_EXAMPLE
+* 2025
+** 2025-12 December
+*** 2025-12-12 Thursday
+**** Daily Plan
+***** TODO Task 1
+      SCHEDULED: <2025-12-12 Thu>
+***** DONE Task 2
+**** Notes
+- Meeting notes go here
+- Random thoughts
+**** Time Log
+:LOGBOOK:
+CLOCK: [2025-12-12 Thu 09:00]--[2025-12-12 Thu 10:30] =>  1:30
+:END:
+#+END_EXAMPLE
+
+* Keybindings
+
+All GTD commands are under =SPC o=:
+
+| Key       | Command                   | Description                        |
+|-----------+---------------------------+------------------------------------|
+| =SPC o j= | my/open-today-note        | Open/create today's journal entry  |
+| =SPC o m= | my/move-todo-to-date      | Move TODO to specific date         |
+| =SPC o t= | my/move-todo-to-tomorrow  | Move TODO to tomorrow              |
+| =SPC o w= | my/move-todo-to-next-week | Move TODO to next week             |
+| =SPC o c= | org-capture               | Quick capture                      |
+| =SPC o a= | org-agenda                | Open agenda view                   |
+| =SPC o r= | org-refile                | Refile current item                |
+| =SPC o l= | org-store-link            | Store a link                       |
+| =SPC o i= | org-clock-in              | Start time tracking                |
+| =SPC o O= | org-clock-out             | Stop time tracking                 |
+| =SPC o g= | org-clock-goto            | Go to currently clocked task       |
+
+* Capture Templates
+
+Press =SPC o c= then:
+
+| Key | Template       | Description                            |
+|-----+----------------+----------------------------------------|
+| t   | Todo           | Quick todo to inbox                    |
+| n   | Note           | Quick note to inbox                    |
+| j   | Journal Entry  | Note in today's journal                |
+| d   | Daily Todo     | Todo scheduled for today               |
+| w   | Weekly Review  | Start a weekly review                  |
+| m   | Monthly Review | Start a monthly review                 |
+
+* Agenda Views
+
+Press =SPC o a= then:
+
+| Key | View         | Description                  |
+|-----+--------------+------------------------------|
+| d   | Daily View   | Today + NEXT + WAITING items |
+| w   | Weekly View  | Week view + all TODOs        |
+| p   | Projects     | Items tagged +project        |
+| i   | Inbox        | Items tagged inbox           |
+
+* TODO States
+
+| State     | Key | Meaning                          |
+|-----------+-----+----------------------------------|
+| TODO      | t   | Task to be done                  |
+| NEXT      | n   | Next action (priority)           |
+| WAITING   | w   | Waiting for someone/something    |
+| DONE      | d   | Completed                        |
+| CANCELLED | c   | Cancelled (won't do)             |
+| MOVED     | m   | Moved to another day             |
+
+Change state with =SPC m t= (or =, t=) in org-mode.
+
+* Daily Workflow
+
+1. Morning: =SPC o j= to open today's note
+2. Review yesterday's incomplete items
+3. Use =SPC o t= to move unfinished TODOs to today
+4. Add new TODOs: =SPC o c d=
+5. Work through tasks, clock time with =SPC o i= / =SPC o O=
+6. Add notes throughout the day under "Notes" section
+
+* Weekly Review (Every Sunday)
+
+1. =SPC o c w= to start a weekly review
+2. Review completed items in agenda
+3. Process inbox items (=SPC o r= to refile)
+4. Review projects and update NEXT actions
+5. Review someday/maybe list
+
+* Monthly Review (End of Month)
+
+1. =SPC o c m= to start a monthly review
+2. Review weekly reviews from the month
+3. Archive completed projects
+4. Update goals and priorities
+5. Review someday/maybe for items to activate
+
+* Tips
+
+** Finding Past Work
+- Use =SPC /= (search in project) within ~/org/
+- Use org-agenda date navigation
+- Use outline folding to navigate year → month → day
+
+** Clock Reports
+In any org buffer: =SPC m t R= generates a clock report table
+
+** Archiving
+Move completed items to archive: =SPC m s A=
+
+** Tags
+Use tags for context: =@home=, =@work=, =@phone=, =@computer=
+Filter agenda by tag: =SPC o a= then =/= to filter
+
+* Maintenance
+
+** Yearly
+- Create new journal file automatically (handled by the system)
+- Archive old completed items
+
+** Monthly
+- Review and clean up someday.org
+- Check projects for stale items
+
+** Weekly
+- Process inbox to zero
+- Review all projects
+

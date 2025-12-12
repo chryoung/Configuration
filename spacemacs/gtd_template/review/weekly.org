@@ -1,0 +1,21 @@
+#+TITLE: Weekly Reviews
+#+FILETAGS: :review:weekly:
+#+STARTUP: overview
+
+* Weekly Reviews
+** Template                                                        :template:
+*** Week of [DATE]
+**** What went well?
+**** What could be improved?
+**** Key accomplishments
+**** Incomplete items to carry forward
+**** Goals for next week
+
+** 2025
+*** Week 50 (2025-12-08 to 2025-12-14)
+**** What went well?
+**** What could be improved?
+**** Key accomplishments
+**** Incomplete items to carry forward
+**** Goals for next week
+

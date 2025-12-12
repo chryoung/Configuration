@@ -1,0 +1,27 @@
+#+TITLE: Monthly Reviews
+#+FILETAGS: :review:monthly:
+#+STARTUP: overview
+
+* Monthly Reviews
+** Template                                                        :template:
+*** [MONTH YEAR]
+**** Monthly Goals Review
+**** Key Achievements
+**** Challenges Faced
+**** Lessons Learned
+**** Areas for Improvement
+**** Goals for Next Month
+**** Projects Status
+**** Habits Tracking
+
+** 2025
+*** December 2025
+**** Monthly Goals Review
+**** Key Achievements
+**** Challenges Faced
+**** Lessons Learned
+**** Areas for Improvement
+**** Goals for Next Month
+**** Projects Status
+**** Habits Tracking
+

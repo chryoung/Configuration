@@ -1,0 +1,7 @@
+#+TITLE: Archive
+#+FILETAGS: :archive:
+#+STARTUP: overview
+
+* Archive
+Completed and cancelled items are archived here.
+

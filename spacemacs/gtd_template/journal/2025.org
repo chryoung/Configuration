@@ -1,0 +1,17 @@
+#+TITLE: Journal 2025
+#+FILETAGS: :journal:
+#+STARTUP: overview
+#+TODO: TODO(t) NEXT(n) WAITING(w) | DONE(d) CANCELLED(c) MOVED(m)
+
+* 2025
+** 2025-12 December
+*** 2025-12-12 Thursday
+**** Daily Plan
+***** TODO Review GTD system setup
+SCHEDULED: <2025-12-12 Thu>
+**** Notes
+- Set up new GTD org-mode system
+**** Time Log
+:LOGBOOK:
+:END:
+
