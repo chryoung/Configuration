@@ -1,216 +1,454 @@
-#!/usr/bin/perl
-
-use warnings;
+#!/usr/bin/env perl
 use strict;
+use warnings;
 
 use Env qw/HOME/;
-use Getopt::Long;
-use File::Path qw/make_path/;
+use Getopt::Long qw(GetOptions);
+use File::Path qw(make_path);
+use File::Spec;
+use File::Basename qw(dirname);
+use File::Temp qw(tempfile);
+use File::Copy qw(move);
+use File::Glob qw(bsd_glob);
+use FindBin qw($Bin);
+use Cwd qw(abs_path);
 
-# Global flags
-my $ENABLE_YCM;
-my $ENABLE_DASH;
-my $ENABLE_LSP;
-my $NVIM_DEFAULT_EDITOR;
-my $INSTALL_ALL;
-my $SHOW_HELP;
+# ----------------------------
+# Global flags / options
+# ----------------------------
+my $ENABLE_YCM          = 0;
+my $ENABLE_DASH         = 0;
+my $ENABLE_LSP          = 0;
+my $NVIM_DEFAULT_EDITOR = 0;
 
-sub fill_template {
-  my $dest = shift;
-  my $template = shift;
-  my $enabled_configs = shift // {};
-  my $comment = shift // "#";
+my $INSTALL_ALL         = 0;
+my $SHOW_HELP           = 0;
 
-  open my $dest_fh, ">", $dest
-    or return 0;
-  open my $template_fh, "<", $template
-    or return 0;
+my $DRY_RUN             = 0;
+my $VERBOSE             = 0;
+my $ASSUME_YES          = 0;   # non-interactive / CI friendly
 
-  my $current_config = "";
-  my $will_print_current_config = 0;
-  while (<$template_fh>) {
-    if (m!^${comment}<<<([^/>]+)>>>$!) {
-      # If the line indicates the begin of the config <<<config_name>>>
-      $current_config = $1;
-      if (exists $enabled_configs->{$current_config}) {
-        $will_print_current_config = 1;
-      }
-    } elsif ($current_config and m!^${comment}<<</${current_config}>>>$!) {
-      # If the line indicates the end of the config <<</config_name>>>
-      $current_config = "";
-      $will_print_current_config = 0;
-    } elsif (($current_config and $will_print_current_config)
-             or not $current_config) {
-      print $dest_fh $_;
-    }
+# Repo root (script directory)
+my $REPO = abs_path($Bin);
+
+# ----------------------------
+# Helpers
+# ----------------------------
+
+sub log_info  { print "[INFO]  @_\n"; }
+sub log_warn  { print "[WARN]  @_\n"; }
+sub log_error { print "[ERROR] @_\n"; }
+
+sub run_cmd {
+  my (@cmd) = @_;
+
+  my $pretty = join(" ", map { _shell_escape($_) } @cmd);
+  log_info($pretty) if $VERBOSE || $DRY_RUN;
+
+  return 1 if $DRY_RUN;
+
+  system(@cmd) == 0 or die "Command failed ($pretty), exit=$?\n";
+  return 1;
+}
+
+sub _shell_escape {
+  my ($s) = @_;
+  return "''" if !defined $s || $s eq '';
+  # Conservative quoting for display only (we don't execute through shell)
+  $s =~ s/'/'\\''/g;
+  return "'$s'";
+}
+
+sub ensure_dir {
+  my ($dir) = @_;
+  return if -d $dir;
+  log_info("Creating directory: $dir") if $VERBOSE || $DRY_RUN;
+  return if $DRY_RUN;
+  make_path($dir, { mode => 0755 }) or die "Cannot create directory $dir: $!\n";
+}
+
+sub timestamp {
+  my @t = localtime();
+  return sprintf("%04d%02d%02d-%02d%02d%02d",
+    $t[5] + 1900, $t[4] + 1, $t[3], $t[2], $t[1], $t[0]
+  );
+}
+
+sub backup_if_exists {
+  my ($path) = @_;
+  return unless -e $path || -l $path;
+
+  # If it's a symlink, we still back it up (safe default).
+  my $bak = $path . ".bak." . timestamp();
+  log_warn("Backing up existing '$path' -> '$bak'");
+  return 1 if $DRY_RUN;
+
+  move($path, $bak) or die "Failed to backup $path -> $bak: $!\n";
+  return 1;
+}
+
+sub safe_write_file_atomic {
+  my ($dest, $content_ref) = @_;
+
+  my $dest_dir = dirname($dest);
+  ensure_dir($dest_dir);
+
+  backup_if_exists($dest);
+
+  my ($fh, $tmp) = tempfile(".tmp-XXXXXX", DIR => $dest_dir, UNLINK => 0);
+  print $fh $$content_ref;
+  close $fh or die "Failed to close temp file $tmp: $!\n";
+
+  log_info("Writing $dest (atomic)") if $VERBOSE || $DRY_RUN;
+  return 1 if $DRY_RUN;
+
+  move($tmp, $dest) or die "Failed to move $tmp -> $dest: $!\n";
+  return 1;
+}
+
+sub read_file {
+  my ($path) = @_;
+  open my $fh, "<", $path or die "Cannot open $path: $!\n";
+  local $/ = undef;
+  my $content = <$fh>;
+  close $fh;
+  return $content;
+}
+
+sub append_line_if_missing {
+  my ($file, $line) = @_;
+  my $needle = $line;
+  $needle =~ s/\R\z//; # strip trailing newline for matching
+
+  my $existing = "";
+  $existing = read_file($file) if -e $file;
+
+  if (index($existing, $needle) >= 0) {
+    log_info("Line already present in $file") if $VERBOSE;
+    return 1;
   }
 
-  close $template_fh;
-  close $dest_fh;
+  log_info("Appending to $file: $needle") if $VERBOSE || $DRY_RUN;
+  return 1 if $DRY_RUN;
 
+  open my $fh, ">>", $file or die "Cannot open $file for append: $!\n";
+  print $fh "\n$needle\n";
+  close $fh;
   return 1;
 }
 
 sub ask_for {
-  my $question = shift;
-  my $confirm = shift;
-  my $dict = shift;
-  my $key = shift;
-  my $confirm_message = shift // "";
+  my ($question, $confirm, $dict, $key, $confirm_message) = @_;
+  $confirm_message //= "";
 
-    print $question;
-    chomp(my $user_input = <STDIN>);
-    if ($user_input eq $confirm) {
-      $dict->{$key} = 1;
-      print $confirm_message if $confirm_message;
+  if ($ASSUME_YES) {
+    $dict->{$key} = 1;
+    print $confirm_message if $confirm_message;
+    return 1;
+  }
+
+  # If not interactive, default to "no" (safe) unless --yes was passed.
+  if (!-t *STDIN) {
+    log_warn("Non-interactive STDIN; skipping prompt '$question' (default: No). Use --yes to auto-enable.");
+    return 0;
+  }
+
+  print $question;
+  chomp(my $user_input = <STDIN> // "");
+  if ($user_input eq $confirm) {
+    $dict->{$key} = 1;
+    print $confirm_message if $confirm_message;
+    return 1;
+  }
+  return 0;
+}
+
+sub fill_template_to_string {
+  my ($template_path, $enabled_configs, $comment) = @_;
+  $enabled_configs //= {};
+  $comment         //= "#";
+
+  open my $template_fh, "<", $template_path
+    or die "Cannot open template $template_path: $!\n";
+
+  my $current_config = "";
+  my $will_print_current_config = 0;
+  my $out = "";
+
+  while (my $line = <$template_fh>) {
+    if ($line =~ m!^\Q$comment\E<<<([^/>]+)>>>$!) {
+      $current_config = $1;
+      $will_print_current_config = exists $enabled_configs->{$current_config} ? 1 : 0;
+      next;
     }
+
+    if ($current_config && $line =~ m!^\Q$comment\E<<</\Q$current_config\E>>>$!) {
+      $current_config = "";
+      $will_print_current_config = 0;
+      next;
+    }
+
+    if (($current_config && $will_print_current_config) || !$current_config) {
+      $out .= $line;
+    }
+  }
+
+  close $template_fh;
+  return $out;
 }
 
-sub mkdir_unless_exists {
-  `mkdir -p $_[0]` unless -d $_[0];
+sub copy_files_by_glob {
+  my ($pattern, $dest_dir) = @_;
+  ensure_dir($dest_dir);
+
+  my @files = bsd_glob($pattern, GLOB_NOCHECK);
+  # If no match, bsd_glob returns the pattern itself when GLOB_NOCHECK is set.
+  if (@files == 1 && $files[0] eq $pattern) {
+    log_warn("No files matched pattern: $pattern");
+    return 1;
+  }
+
+  for my $src (@files) {
+    next unless -f $src;
+    my $base = File::Basename::basename($src);
+    my $dest = File::Spec->catfile($dest_dir, $base);
+
+    backup_if_exists($dest);
+    run_cmd("cp", $src, $dest);
+  }
+  return 1;
 }
+
+sub os_flavor {
+  # returns: macos | ubuntu | linux | other
+  if ($^O eq "darwin") {
+    return "macos";
+  }
+  if ($^O eq "linux") {
+    # Ubuntu / Debian check: /etc/os-release contains ID=ubuntu
+    if (-e "/etc/os-release") {
+      my $osr = eval { read_file("/etc/os-release") } // "";
+      return "ubuntu" if $osr =~ /^ID=ubuntu$/m;
+      return "linux";
+    }
+    return "linux";
+  }
+  return "other";
+}
+
+# ----------------------------
+# Installers
+# ----------------------------
 
 sub install_neovim {
-  my $neovim_config_home = "${HOME}/.config/nvim/";
+  my $neovim_config_home = File::Spec->catdir($HOME, ".config", "nvim");
+  ensure_dir(File::Spec->catdir($neovim_config_home, "lua"));
 
-  # Make configuration directory
-  mkdir_unless_exists("$neovim_config_home/lua");
-
-  # Install Packer
-  my $packer_vim = "${HOME}/.local/share/nvim/site/pack/packer/start/packer.nvim";
-  `git clone --depth=1 https://github.com/wbthomason/packer.nvim $packer_vim` unless -e $packer_vim;
+  # Install packer if missing (legacy but still works)
+  my $packer_vim = File::Spec->catfile($HOME, ".local", "share", "nvim", "site", "pack", "packer", "start", "packer.nvim");
+  unless (-e $packer_vim) {
+    ensure_dir(dirname($packer_vim));
+    run_cmd("git", "clone", "--depth=1", "https://github.com/wbthomason/packer.nvim", $packer_vim);
+  }
 
   my %enabled_configs;
-
-  # Enable configurations
   $enabled_configs{"dash"} = 1 if $ENABLE_DASH;
-  $enabled_configs{"ycm"} = 1 if $ENABLE_YCM;
+  $enabled_configs{"ycm"}  = 1 if $ENABLE_YCM;
+
   if ($ENABLE_LSP) {
     $enabled_configs{"lsp"} = 1;
+
     my %lsp_config = (
       "lsp_perl" => {
-        "lsp" => "PLS",
-        "language" => "Perl",
-        "message" => "Enabled. Please remember to run `sudo cpan install -f PLS` after setup.\n",
+        lsp => "PLS",
+        language => "Perl",
+        message => "Enabled. Remember: `sudo cpan install -f PLS`\n",
       },
       "lsp_python" => {
-        "lsp" => "pyright",
-        "language" => "Python",
-        "message" => "Enabled. Please remember to run `pip install pyright` after setup.\n",
+        lsp => "pyright",
+        language => "Python",
+        message => "Enabled. Remember: `pip install pyright`\n",
       },
       "lsp_rust" => {
-        "lsp" => "rust_analyzer",
-        "language" => "Rust",
+        lsp => "rust-analyzer",
+        language => "Rust",
+        message => "",
       },
       "lsp_clangd" => {
-        "lsp" => "clangd",
-        "language" => "C/C++",
+        lsp => "clangd",
+        language => "C/C++",
+        message => "",
       },
     );
-    while (my ($lsp_config_key, $lsp_config_value) = each %lsp_config) {
+
+    while (my ($k, $v) = each %lsp_config) {
       ask_for(
-        sprintf("Enable %s LSP for %s on neovim? [y/N]: \n", $lsp_config_value->{"lsp"}, $lsp_config_value->{"language"}),
+        sprintf("Enable %s LSP for %s in Neovim? [y/N]: ", $v->{lsp}, $v->{language}),
         "y",
         \%enabled_configs,
-        $lsp_config_key,
-        $lsp_config_value->{"message"}
+        $k,
+        $v->{message}
       );
     }
 
-    # Copy LSP configuration
-    `mkdir -p $neovim_config_home/plugin`;
-    `cp nvim/neovim/plugin/lsp.lua $neovim_config_home/plugin/lsp.lua`;
+    # Copy LSP configuration file
+    my $src = File::Spec->catfile($REPO, "nvim", "neovim", "plugin", "lsp.lua");
+    my $dst_dir = File::Spec->catdir($neovim_config_home, "plugin");
+    ensure_dir($dst_dir);
+    my $dst = File::Spec->catfile($dst_dir, "lsp.lua");
+
+    backup_if_exists($dst);
+    run_cmd("cp", $src, $dst);
   }
-  # Install impatient plugin if Dash is not installed
-  # impatient plugin and Dash plugin have conflicts
-  # Dash cannot require libdash_nvim if impatient is installed
-  # and the require command is hooked
+
+  # impatient plugin conflicts with Dash, so enable it only when Dash is not enabled
   $enabled_configs{"impatient"} = 1 unless $ENABLE_DASH;
 
-  # Compose init.vim
-  fill_template("$neovim_config_home/init.vim", "nvim/neovim/init.vim", \%enabled_configs, "\"");
-  # Compose config.lua
-  fill_template("$neovim_config_home/lua/config.lua", "nvim/neovim/lua/config.lua", \%enabled_configs, "--");
-  # Compose plugins.lua
-  fill_template("$neovim_config_home/lua/plugins.lua", "nvim/neovim/lua/plugins.lua", \%enabled_configs, "--");
+  # Compose init.vim / lua files from templates (atomic + backup)
+  my $init_template = File::Spec->catfile($REPO, "nvim", "neovim", "init.vim");
+  my $config_template = File::Spec->catfile($REPO, "nvim", "neovim", "lua", "config.lua");
+  my $plugins_template = File::Spec->catfile($REPO, "nvim", "neovim", "lua", "plugins.lua");
 
-  # Install ftplugin
-  mkdir_unless_exists("$neovim_config_home/ftplugin");
-  `cp vim_common/ftplugin/*.vim $neovim_config_home/ftplugin`;
+  my $init_out    = fill_template_to_string($init_template,    \%enabled_configs, "\"");
+  my $config_out  = fill_template_to_string($config_template,  \%enabled_configs, "--");
+  my $plugins_out = fill_template_to_string($plugins_template, \%enabled_configs, "--");
 
-  print "Start nvim and run :PackerSync manually\n";
+  safe_write_file_atomic(File::Spec->catfile($neovim_config_home, "init.vim"), \$init_out);
+  safe_write_file_atomic(File::Spec->catfile($neovim_config_home, "lua", "config.lua"), \$config_out);
+  safe_write_file_atomic(File::Spec->catfile($neovim_config_home, "lua", "plugins.lua"), \$plugins_out);
+
+  # Install ftplugin files (copy; backup if overwriting)
+  copy_files_by_glob(File::Spec->catfile($REPO, "vim_common", "ftplugin", "*.vim"),
+                     File::Spec->catdir($neovim_config_home, "ftplugin"));
+
+  log_info("Neovim installed. Start nvim and run :PackerSync manually.");
 }
 
 sub install_vim {
-  # Install Vundle
-  `git clone --depth=1 https://github.com/VundleVim/Vundle.vim.git ${HOME}/.vim/bundle/Vundle.vim` unless -d "${HOME}/.vim/bundle/Vundle.vim";
+  # Vundle
+  my $vundle_dir = File::Spec->catdir($HOME, ".vim", "bundle", "Vundle.vim");
+  unless (-d $vundle_dir) {
+    ensure_dir(dirname($vundle_dir));
+    run_cmd("git", "clone", "--depth=1", "https://github.com/VundleVim/Vundle.vim.git", $vundle_dir);
+  }
 
   my %enabled_configs;
-
-  # Install Dash plugin
   $enabled_configs{"dash"} = 1 if $ENABLE_DASH;
 
-  # Compose .vimrc
-  fill_template("${HOME}/.vimrc", "vim/vimrc", \%enabled_configs, "\"");
+  my $vimrc_template = File::Spec->catfile($REPO, "vim", "vimrc");
+  my $vimrc_out      = fill_template_to_string($vimrc_template, \%enabled_configs, "\"");
 
-  # Install ftplugin
-  mkdir_unless_exists("${HOME}/.vim/ftplugin");
-  `cp vim_common/ftplugin/*.vim ${HOME}/.vim/ftplugin`;
+  safe_write_file_atomic(File::Spec->catfile($HOME, ".vimrc"), \$vimrc_out);
 
-  print "Start vim and run :PluginInstall manually\n";
+  copy_files_by_glob(File::Spec->catfile($REPO, "vim_common", "ftplugin", "*.vim"),
+                     File::Spec->catdir($HOME, ".vim", "ftplugin"));
+
+  log_info("Vim installed. Start vim and run :PluginInstall manually.");
 }
 
 sub install_tmux {
-  my $linux_powerline = "/usr/share/powerline/bindings/tmux/powerline.conf";
+  my $flavor = os_flavor();
   my %enabled_configs;
 
-  if ($^O eq "linux" and -e "/usr/bin/apt-get") {
+  if ($flavor eq "ubuntu" && -e "/usr/bin/apt-get") {
+    my $linux_powerline = "/usr/share/powerline/bindings/tmux/powerline.conf";
     unless (-e $linux_powerline) {
-      print "Installing Powerline...\n";
-      `sudo apt-get -y install powerline` 
+      log_info("Installing Powerline (apt)...");
+      run_cmd("sudo", "apt-get", "update");
+      run_cmd("sudo", "apt-get", "-y", "install", "powerline");
     }
-
-    print "Use Powerline for tmux theme\n";
+    log_info("Using Powerline theme for tmux.");
     $enabled_configs{"powerline"} = 1;
   } else {
-    print "Use customized tmux theme\n";
+    # macOS or non-Ubuntu Linux: don't auto-install; just use the simple theme.
+    log_info("Using customized tmux theme (non-apt platform or powerline not managed here).");
     $enabled_configs{"simpletheme"} = 1;
   }
 
-  fill_template("${HOME}/.tmux.conf", "tmux/tmux.conf", \%enabled_configs);
+  my $tmux_template = File::Spec->catfile($REPO, "tmux", "tmux.conf");
+  my $tmux_out      = fill_template_to_string($tmux_template, \%enabled_configs, "#");
+
+  safe_write_file_atomic(File::Spec->catfile($HOME, ".tmux.conf"), \$tmux_out);
 }
 
 sub install_fish {
-  mkdir_unless_exists("${HOME}/.config/fish");
-  `cp -r fish/* ${HOME}/.config/fish/`;
+  my $fish_dir = File::Spec->catdir($HOME, ".config", "fish");
+  ensure_dir($fish_dir);
+
+  # Copy fish config directory contents (keeps your old behavior but with better logging + no shell interpolation)
+  my $src = File::Spec->catfile($REPO, "fish");
+  run_cmd("cp", "-R", File::Spec->catfile($src, "."), $fish_dir);
+
   unless ($NVIM_DEFAULT_EDITOR) {
-    `rm ${HOME}/.config/fish/conf.d/editor.fish`;
-    `rm ${HOME}/.config/fish/functions/vim.fish`;
+    my $editor_conf = File::Spec->catfile($fish_dir, "conf.d", "editor.fish");
+    my $vim_func    = File::Spec->catfile($fish_dir, "functions", "vim.fish");
+
+    if (-e $editor_conf || -l $editor_conf) {
+      backup_if_exists($editor_conf);
+      run_cmd("rm", "-f", $editor_conf);
+    }
+    if (-e $vim_func || -l $vim_func) {
+      backup_if_exists($vim_func);
+      run_cmd("rm", "-f", $vim_func);
+    }
   }
 
+  log_info("Fish installed.");
 }
 
 sub install_asdf {
-  print "Installing asdf vm...\n";
-  `git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.14.0` unless -d "${HOME}/.asdf";
-  open my $fh, ">>", "${HOME}/.config/fish/config.fish"
-    or die "Cannot open fish configuration file";
-  print $fh "\nsource ~/.asdf/asdf.fish\n";
-  close $fh;
-  make_path("${HOME}/.config/fish/completions", mode => 0755);
-  `ln -s ~/.asdf/completions/asdf.fish ~/.config/fish/completions`
-    unless -l "${HOME}/.config/fish/completions/asdf.fish";
+  log_info("Installing asdf-vm...");
+  my $asdf_dir = File::Spec->catdir($HOME, ".asdf");
+  unless (-d $asdf_dir) {
+    run_cmd("git", "clone", "https://github.com/asdf-vm/asdf.git", $asdf_dir, "--branch", "v0.14.0");
+  } else {
+    log_info("asdf already exists at $asdf_dir");
+  }
+
+  my $fish_config = File::Spec->catfile($HOME, ".config", "fish", "config.fish");
+  ensure_dir(dirname($fish_config));
+  # Ensure file exists (don't destroy content)
+  if (!-e $fish_config) {
+    my $empty = "";
+    safe_write_file_atomic($fish_config, \$empty);
+  }
+
+  append_line_if_missing($fish_config, "source ~/.asdf/asdf.fish");
+
+  my $comp_dir = File::Spec->catdir($HOME, ".config", "fish", "completions");
+  ensure_dir($comp_dir);
+
+  my $src = File::Spec->catfile($asdf_dir, "completions", "asdf.fish");
+  my $dst = File::Spec->catfile($comp_dir, "asdf.fish");
+
+  if (-l $dst) {
+    log_info("asdf completion symlink already exists: $dst") if $VERBOSE;
+  } elsif (-e $dst) {
+    backup_if_exists($dst);
+    run_cmd("ln", "-s", $src, $dst);
+  } else {
+    run_cmd("ln", "-s", $src, $dst);
+  }
+
+  log_info("asdf installed (fish integration done).");
 }
 
+# ----------------------------
+# CLI parsing and dispatch
+# ----------------------------
 
 GetOptions(
-  "ycm"  => \$ENABLE_YCM,
-  "dash" => \$ENABLE_DASH,
-  "lsp"  => \$ENABLE_LSP,
-  "nvim" => \$NVIM_DEFAULT_EDITOR,
-  "all"  => \$INSTALL_ALL,
-  "h"    => \$SHOW_HELP,
-);
+  "ycm"     => \$ENABLE_YCM,
+  "dash"    => \$ENABLE_DASH,
+  "lsp"     => \$ENABLE_LSP,
+  "nvim"    => \$NVIM_DEFAULT_EDITOR,
+  "all"     => \$INSTALL_ALL,
+  "h|help"  => \$SHOW_HELP,
+
+  "dry-run" => \$DRY_RUN,
+  "v|verbose" => \$VERBOSE,
+  "yes"     => \$ASSUME_YES,
+) or die "Invalid options. Use --help\n";
 
 my @install_targets = @ARGV;
 
@@ -222,30 +460,66 @@ my %all_targets = (
   "asdf"   => \&install_asdf,
 );
 
-if ($SHOW_HELP) {
-    print "install.pl [options] <targets>\n";
-    print "targets:\n";
-    foreach my $target (sort keys %all_targets) {
-        print "    $target\n";
-    }
+sub print_help {
+  print <<"EOF";
+install.pl [options] <targets>
 
-    print "options:\n";
-    print "    --ycm install ycm to neovim\n";
-    print "    --dash install dash extension to vim and neovim\n";
-    print "    --lsp enable LSP support for neovim\n";
-    print "    --nvim use nvim as default fish editor\n";
-    print "    --all install all targets\n";
-    print "    --h show this help\n";
-} elsif ($INSTALL_ALL) {
-  while (my ($target, $installer) = each %all_targets) {
-    &{$installer};
-    print "Finish installing $target\n";
+Targets:
+EOF
+  foreach my $target (sort keys %all_targets) {
+    print "  $target\n";
   }
 
-  print "Finish installing all\n";
-} else {
-  foreach my $target (@install_targets) {
-    &{$all_targets{$target}} if exists $all_targets{$target};
-    print "Finish installing $target\n";
-  }
+  print <<"EOF";
+
+Options:
+  --ycm         Enable YCM config (Neovim)
+  --dash        Enable Dash config (Vim/Neovim)
+  --lsp         Enable LSP support (Neovim) and prompt per language
+  --nvim        Use nvim as default editor in fish config (keeps editor.fish/vim.fish)
+
+  --all         Install all targets
+  -h, --help    Show this help
+
+  --dry-run     Print actions, do not modify system
+  -v, --verbose Show commands being executed
+  --yes         Auto-answer "yes" to prompts (useful for CI)
+
+Examples:
+  ./install.pl --all
+  ./install.pl --dash --lsp neovim tmux fish
+  ./install.pl --dry-run --verbose --all
+EOF
 }
+
+if ($SHOW_HELP) {
+  print_help();
+  exit 0;
+}
+
+if ($INSTALL_ALL) {
+  for my $target (sort keys %all_targets) {
+    log_info("== Installing $target ==");
+    $all_targets{$target}->();
+    log_info("Finish installing $target");
+  }
+  log_info("Finish installing all.");
+  exit 0;
+}
+
+if (!@install_targets) {
+  log_error("No targets provided. Use --help.");
+  exit 1;
+}
+
+for my $target (@install_targets) {
+  if (!exists $all_targets{$target}) {
+    log_warn("Unknown target '$target' (skipped).");
+    next;
+  }
+  log_info("== Installing $target ==");
+  $all_targets{$target}->();
+  log_info("Finish installing $target");
+}
+
+exit 0;
