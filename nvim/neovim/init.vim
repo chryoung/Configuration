@@ -86,10 +86,11 @@ nnoremap <silent> <Leader>fk :cprev<CR>
 " Redraw screen and turn off the current highlight search
 nnoremap <silent> <Leader>l :nohl<CR><C-L>
 
-" wq Map
-nnoremap <silent> <Leader>z :wq<CR>
-nnoremap <silent> <Leader>q :q<CR>
-nnoremap <silent> <Leader>w :w<CR>
+" File operation
+nnoremap <silent> <Leader>qs :wq<CR>
+nnoremap <silent> <Leader>qq :q<CR>
+nnoremap <silent> <Leader>qQ :q!<CR>
+nnoremap <silent> <Leader>fs :w<CR>
 
 " Colon map
 nnoremap <Leader><Space> :
@@ -110,8 +111,8 @@ nnoremap <silent> <C-l> :TmuxNavigateRight<cr>
 " telescope
 nnoremap <Leader>ff <cmd>lua require('telescope.builtin').find_files()<cr>
 nnoremap <Leader>fg <cmd>lua require('telescope.builtin').live_grep()<cr>
-nnoremap <Leader>fb <cmd>lua require('telescope.builtin').buffers()<cr>
-nnoremap <Leader>fh <cmd>lua require('telescope.builtin').help_tags()<cr>
+nnoremap <Leader>bb <cmd>lua require('telescope.builtin').buffers()<cr>
+nnoremap <Leader>hh <cmd>lua require('telescope.builtin').help_tags()<cr>
 "<<<dash>>>
 
 " Dash
