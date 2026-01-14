@@ -120,14 +120,8 @@ return packer.startup(function()
     'nvim-treesitter/nvim-treesitter',
     run = ':TSUpdate',
     event = 'VimEnter',
-    config = function() require'nvim-treesitter.configs'.setup {
-      ensure_installed = { 'cpp', 'rust', 'ruby', 'python', 'lua' },
-      sync_install = false,
-      highlight = {
-        enable = true,
-        disable = { 'perl' },
-        additional_vim_regex_highlighting = false,
-      },
+    config = function() require'nvim-treesitter'.install {
+      'cpp', 'rust', 'ruby', 'python', 'lua'
     } end
   }
 
