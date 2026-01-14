@@ -86,11 +86,12 @@ nnoremap <silent> <Leader>fk :cprev<CR>
 " Redraw screen and turn off the current highlight search
 nnoremap <silent> <Leader>l :nohl<CR><C-L>
 
-" File operation
-nnoremap <silent> <Leader>qs :wq<CR>
-nnoremap <silent> <Leader>qq :q<CR>
-nnoremap <silent> <Leader>qQ :q!<CR>
+" File and window operation
+nnoremap <silent> <Leader>qs :wqa<CR>
+nnoremap <silent> <Leader>qq :qa<CR>
+nnoremap <silent> <Leader>qQ :qa!<CR>
 nnoremap <silent> <Leader>fs :w<CR>
+nnoremap <silent> <Leader>wd :q<CR>
 
 " Colon map
 nnoremap <Leader><Space> :
